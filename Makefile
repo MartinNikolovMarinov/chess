@@ -1,7 +1,11 @@
+CC     = g++
+SRC    = main.cpp
+CFLAGS = -O0
+
 .PHONY: build
 build:
 	mkdir -p ./build
-	g++ main.cpp -o build/main
+	$(CC) $(CFLAGS) $(SRC) -o build/main
 
 .PHONY: clean
 clean:

@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.edf": "html",
+        "atomic": "cpp",
+        "cstdint": "cpp",
+        "iostream": "cpp",
+        "string": "cpp",
+        "stdexcept": "cpp",
+        "iosfwd": "cpp"
+    }
+}
