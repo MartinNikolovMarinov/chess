@@ -34,12 +34,12 @@ void Square::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
 		}
 	}
 
-	if (this->piece.playerId > 0 && this->piece.type != PieceType::None) {
+	if (this->piece.GetPlayerId() > 0 && this->piece.GetType() != PieceType::None) {
 		// Display piece right in the center of the square:
 		u32 pRow = (height / 2) + _top;
 		u32 pCol = (width / 2) + _left - 1;
-		_dbuf->SetAt(pRow, pCol, u32DigitToChar(this->piece.playerId));
-		_dbuf->SetAt(pRow, pCol + 1, this->piece.type);
+		_dbuf->SetAt(pRow, pCol, U32DigitToChar(this->piece.GetPlayerId()));
+		_dbuf->SetAt(pRow, pCol + 1, this->piece.GetType());
 	}
 
 	// Draw bottom
@@ -52,6 +52,6 @@ void Square::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
 }
 
 void Square::SetPiece(const Piece *_p) {
-	piece.type = _p->type;
-	piece.playerId = _p->playerId;
+	piece.SetType(_p->GetType());
+	piece.SetPlayerId(_p->GetPlayerId());
 }

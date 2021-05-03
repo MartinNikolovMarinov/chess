@@ -15,13 +15,19 @@ enum PieceType : char {
 
 class Piece
 {
-public:
-	PieceType type; // TODO: add useless getters and setters
+private:
+	PieceType type;
 	i32 playerId;
+public:
 
 	Piece();
 	Piece(PieceType type, i32 playerId);
 	~Piece();
+
+	PieceType GetType() const;
+	void SetType(PieceType type);
+	i32 GetPlayerId() const;
+	void SetPlayerId(i32 playerId);
 };
 
 #endif
