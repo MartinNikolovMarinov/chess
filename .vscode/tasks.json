@@ -7,6 +7,11 @@
             "args": [
                 "-g",
                 "${workspaceFolder}/main.cpp",
+                "${workspaceFolder}/cutil.cpp",
+                "${workspaceFolder}/display_buf.cpp",
+                "${workspaceFolder}/piece.cpp",
+                "${workspaceFolder}/square.cpp",
+                "${workspaceFolder}/chess_board.cpp",
                 "-o",
                 "${workspaceFolder}/build/main"
             ],
