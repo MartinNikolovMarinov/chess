@@ -55,3 +55,7 @@ void Square::SetPiece(const Piece *_p) {
 	piece.SetType(_p->GetType());
 	piece.SetPlayerId(_p->GetPlayerId());
 }
+
+const Piece Square::GetPiece() const {
+	return piece;
+}

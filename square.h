@@ -22,6 +22,7 @@ public:
 
 	void Display(DisplayBuffer *dbuf, u32 top, u32 left);
 	void SetPiece(const Piece *piece);
+	const Piece GetPiece() const;
 };
 
 #endif

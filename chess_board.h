@@ -20,9 +20,9 @@ const u32 DISPLAY_HEIGHT = CHESSBOARD_HEIGHT;
 
 class ChessBoard {
 private:
-	Square field[FIELD_SIZE][FIELD_SIZE];
 	void initBoardState();
 public:
+	Square field[FIELD_SIZE][FIELD_SIZE];
 
 	ChessBoard();
 	~ChessBoard();

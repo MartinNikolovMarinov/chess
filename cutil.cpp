@@ -10,6 +10,16 @@ char U32DigitToChar(u32 _n) {
 	return (char)_n + 48;
 }
 
+// n must be a number between 0 and 9
+u32 CharToU32Digit(char _c) {
+	if ('0' > _c || _c > '9') {
+		std::ostringstream msg;
+		msg << "invalid value of argument c=" << _c << std::endl;
+		throw std::invalid_argument(msg.str());
+	}
+	return (u32)(_c - 48);
+}
+
 void ClearScreen() {
 	#ifdef WINDOWS
 		std::system("cls");
@@ -68,4 +78,19 @@ char CanonicalPosToChessLetter(u32 _n) {
 			msg << "invalid value of argument n=" << _n << std::endl;
 			throw std::invalid_argument(msg.str());
 	}
+}
+
+std::vector<std::string> StrSplit(std::string _s, std::string _delim) {
+	std::size_t start = 0U;
+    std::size_t end = _s.find(_delim);
+	std::vector<std::string> res;
+    while (end != std::string::npos)
+    {
+        res.push_back(_s.substr(start, end - start));
+        start = end + _delim.length();
+        end = _s.find(_delim, start);
+    }
+
+	res.push_back(_s.substr(start, end));
+	return res;
 }

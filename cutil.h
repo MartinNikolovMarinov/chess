@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include "basic_types.h"
 
@@ -10,9 +11,11 @@
 #define assert_exp(expression) if(!(expression)) { *(int *)0 = 0; }
 
 char U32DigitToChar(u32 n);
+u32 CharToU32Digit(char _c);
 u32 ChessDigitToCanonicalPos(char _c);
 u32 ChessLetterToCanonicalPos(char _c);
 char CanonicalPosToChessLetter(u32 _n);
 void ClearScreen();
+std::vector<std::string> StrSplit(std::string _s, std::string _delim);
 
 #endif

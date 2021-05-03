@@ -34,48 +34,47 @@ i32 ParseMoveCommand(std::string _input, Pos *out) {
 	return 0;
 }
 
-
 int main() {
 	DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-
+	ChessBoard cb;
 	std::string inLine;
 	u32 currPlayer = 1;
 	bool done = false;
+
 	while(!done) {
 		ClearScreen();
 		dbuf.Clear(' ');
 
-		ChessBoard cb;
 		cb.Display(&dbuf, 2, (DISPLAY_WIDTH - CHESSBOARD_WIDTH) / 2);
 		dbuf.FlushTo(std::cout);
-
-		return 0;
 
 		inLine.clear();
 		std::cout << "Player " << currPlayer << " make a move!" <<  std::endl;
 
 		std::cout << "Type the location of the peace you want to move: ";
-		// std::cin >> inLine;
-		inLine = "0A";
-		Pos out = {};
-		i32 res = ParseMoveCommand(inLine, &out);
+		std::cin >> inLine;
+		Pos from = {};
+		i32 res = ParseMoveCommand(inLine, &from);
 		if (res < 0) {
 			std::cout << "Invalid Command" << std::endl;
 			continue;
 		}
-		std::cout << out.Row << " " << out.Col << std::endl;
 
 		std::cout << std::endl;
 		std::cout << "Type the location you want to move it: ";
-		// std::cin >> inLine;
-		inLine = "3C";
-		out = {};
-		res = ParseMoveCommand(inLine, &out);
+		std::cin >> inLine;
+		Pos to = {};
+		res = ParseMoveCommand(inLine, &to);
 		if (res < 0) {
 			std::cout << "Invalid Command" << std::endl;
 			continue;
 		}
-		std::cout << out.Row << " " << out.Col << std::endl;
+
+		const Piece fromP = cb.field[from.Row][from.Col].GetPiece();
+		const Piece toP = cb.field[to.Row][to.Col].GetPiece();
+
+		cb.field[to.Row][to.Col].SetPiece(&fromP);
+		cb.field[from.Row][from.Col].SetPiece(&toP);
 
 		currPlayer = currPlayer == 1 ? 2 : 1;
 	}
