@@ -11,7 +11,7 @@ public:
 	TextDisplay();
 	~TextDisplay();
 
-	void SetMsg(std::string msg);
+	void SetMsg(const std::string &msg);
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
 	void Clear();
 };

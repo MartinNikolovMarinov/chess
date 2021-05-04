@@ -83,10 +83,10 @@ void ChessBoard::initBoardState() {
 			char tChar = pieceStr[1];
 
 			i32 playerId = CharToU32Digit(pChar);
-			PieceType type = (PieceType)tChar;
+			PieceType type = (tChar != '0') ? (PieceType)tChar : PieceType::None;
 
 			Piece p = Piece(type, playerId);
-			field[row][col].SetPiece(&p);
+			field[row][col].SetPiece(p);
 		}
 	}
 #else

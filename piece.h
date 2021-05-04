@@ -28,6 +28,11 @@ public:
 	void SetType(PieceType type);
 	i32 GetPlayerId() const;
 	void SetPlayerId(i32 playerId);
+	bool GetEnPassant() const;
+	void SetEnPassant(bool v);
+	bool IsEmpty() const;
 };
+
+static const Piece EMPTY_PIECE;
 
 #endif

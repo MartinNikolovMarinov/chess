@@ -15,14 +15,17 @@ private:
 	u32 width, height;
 	SquareColor color;
 	Piece piece;
+	bool enPassant;
 public:
 	Square();
-	Square(u32 width, u32 height, SquareColor color, Piece piece);
+	Square(u32 width, u32 height, SquareColor color, const Piece &piece);
 	~Square();
 
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
-	void SetPiece(const Piece *piece);
-	const Piece GetPiece() const;
+	void SetPiece(const Piece &piece);
+	bool GetEnPassant() const;
+	void SetEnPassant(bool _v);
+	const Piece& GetPiece() const;
 };
 
 #endif

@@ -3,7 +3,7 @@
 TextDisplay::TextDisplay() {}
 TextDisplay::~TextDisplay() {}
 void TextDisplay::Clear() { msg.clear(); }
-void TextDisplay::SetMsg(std::string _m) { msg = _m; }
+void TextDisplay::SetMsg(const std::string &_m) { msg = std::string(_m); }
 
 void TextDisplay::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);

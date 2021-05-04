@@ -1,15 +1,28 @@
 #include "square.h"
 
 Square::Square() {}
-Square::Square(u32 _w, u32 _h, SquareColor _c, Piece _p) : color(_c), piece(_p) {
+Square::Square(u32 _w, u32 _h, SquareColor _c, const Piece &_p) : color(_c) {
 	// We need at least 3 by 3 square to be able to display a pieace in the square:
 	assert_exp(_w >= 3);
 	assert_exp(_h >= 3);
 
 	width = _w;
 	height = _h;
+	this->SetPiece(_p);
 }
 Square::~Square() {}
+
+bool Square::GetEnPassant() const { return enPassant; }
+void Square::SetEnPassant(bool _v) { enPassant = _v; }
+
+void Square::SetPiece(const Piece &_p) {
+	piece.SetType(_p.GetType());
+	piece.SetPlayerId(_p.GetPlayerId());
+}
+
+const Piece& Square::GetPiece() const {
+	return piece;
+}
 
 void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);
@@ -50,13 +63,4 @@ void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 		if (col == 0 || col == width - 1) _dbuf.SetAt(offRow, offCol, '|');
 		else _dbuf.SetAt(offRow, offCol, '-');
 	}
-}
-
-void Square::SetPiece(const Piece *_p) {
-	piece.SetType(_p->GetType());
-	piece.SetPlayerId(_p->GetPlayerId());
-}
-
-const Piece Square::GetPiece() const {
-	return piece;
 }

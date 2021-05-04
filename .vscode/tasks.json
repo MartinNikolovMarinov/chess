@@ -14,6 +14,7 @@
                 "${workspaceFolder}/chess_board.cpp",
                 "${workspaceFolder}/text.cpp",
                 "${workspaceFolder}/game_state.cpp",
+                "${workspaceFolder}/commands.cpp",
                 "-o",
                 "${workspaceFolder}/build/main"
             ],
