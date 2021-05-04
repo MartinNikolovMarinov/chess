@@ -10,7 +10,7 @@ enum SquareColor : u8 {
 	White = 1,
 };
 
-class Square {
+class Square : Displayer {
 private:
 	u32 width, height;
 	SquareColor color;
@@ -20,7 +20,7 @@ public:
 	Square(u32 width, u32 height, SquareColor color, Piece piece);
 	~Square();
 
-	void Display(DisplayBuffer *dbuf, u32 top, u32 left);
+	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
 	void SetPiece(const Piece *piece);
 	const Piece GetPiece() const;
 };

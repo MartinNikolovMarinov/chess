@@ -1,5 +1,7 @@
 #include "display_buf.h"
 #include "chess_board.h"
+#include "text.h"
+#include "game_state.h"
 
 // TODO: all the code should be in a common namespace. (probably)
 // TODO: display function is common for all visible/window elements.
@@ -40,81 +42,32 @@ i32 ParseMoveCommand(const std::string& _input, CmdPos *_out, std::string& _errM
 	return 0;
 }
 
-class GameState
-{
-public:
-	ChessBoard *chessBoard;
-	u32 currPlayer = 1;
-	std::string inputLine;
-	bool isDone = false;
-	std::string errMsg;
-
-	GameState();
-	GameState(ChessBoard &chessBoard);
-	~GameState();
-
-	void RotatePlayer();
-	void Clear();
-};
-
-GameState::GameState(ChessBoard &_cb) : chessBoard(&_cb) {}
-GameState::~GameState() {}
-void GameState::RotatePlayer() { currPlayer == 1 ? 2 : 1; }
-void GameState::Clear() {
-	inputLine.clear();
-}
-
-class MsgForUser
-{
-private:
-	std::string msg;
-public:
-	MsgForUser();
-	~MsgForUser();
-
-	void SetMsg(std::string msg);
-	void Display(DisplayBuffer &dbuf, u32 top, u32 left);
-	void Clear();
-};
-
-MsgForUser::MsgForUser() {}
-MsgForUser::~MsgForUser() {}
-void MsgForUser::Clear() { msg.clear(); }
-void MsgForUser::SetMsg(std::string _m) { msg = _m; }
-
-void MsgForUser::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
-	// TODO: use common asserts from virtual method.
-
-	// Message will not fit, even by wrapping the text:
-	u32 offsetRectArea = _left * _dbuf.GetHeight();
-	u32 diplayRectArea = _dbuf.GetWidth() * _dbuf.GetHeight();
-	assert_exp(offsetRectArea + msg.length() < diplayRectArea);
-
-	u32 row = _top;
-	u32 col = _left;
-	for (i32 i = 0; i < msg.length(); i++, col++) {
-		if (msg[i] == '\n') {
-			// If the message has a new line, draw on the line below.
-			row++;
-			col = _left;
-			// + 1 to skip the new line character:
-			if (i + 1 >= msg.length()) { break; }
-			i++;
-		} else if (col >= _dbuf.GetWidth()) {
-			// If the message can't fit into the buffer, draw it on the line below.
-			row++;
-			col = _left;
-		}
-
-		_dbuf.SetAt(row, col, msg[i]);
+i32 PromptPlayerInput(GameState &gm, CmdPos &from, CmdPos &to) {
+	std::cout << "Player " << gm.currPlayer << " make a move!" <<  std::endl;
+	std::cout << "Type row first then col, for example 1A is a valid location." <<  std::endl;
+	std::cout << "Type the location of the peace you want to move: ";
+	std::cin >> gm.inputLine;
+	i32 res = ParseMoveCommand(gm.inputLine, &from, gm.errMsg);
+	if (res < 0) {
+		return res;
 	}
+
+	std::cout << std::endl;
+	std::cout << "Type the location you want to move it: ";
+	std::cin >> gm.inputLine;
+	res = ParseMoveCommand(gm.inputLine, &to, gm.errMsg);
+	if (res < 0) {
+		return res;
+	}
+
+	return 0;
 }
 
 int main() {
     DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	ChessBoard cb;
 	GameState gm = GameState(cb);
-	MsgForUser mfu = MsgForUser();
+	TextDisplay mfu = TextDisplay();
 
 	char c = '1';
 	while(!gm.isDone) {
@@ -137,32 +90,20 @@ int main() {
 			continue;
 		}
 
-		// DEBUG: from this line down:
-		cb.Display(&dbuf, 2, DISPLAY_CHESS_CENTER_LEFT);
+		cb.Display(dbuf, 2, DISPLAY_CHESS_CENTER_LEFT);
 		dbuf.FlushTo(std::cout);
 
-		std::cout << "Player " << gm.currPlayer << " make a move!" <<  std::endl;
-		std::cout << "Type row first then col, for example 1A is a valid location." <<  std::endl;
-		std::cout << "Type the location of the peace you want to move: ";
-		std::cin >> gm.inputLine;
+		// Prompt the player for input. This blocks the thread
+		// so drawing needs to happen above this line!
 		CmdPos from = {};
-		i32 res = ParseMoveCommand(gm.inputLine, &from, gm.errMsg);
-		if (res < 0) {
-			continue;
-		}
-
-		std::cout << std::endl;
-		std::cout << "Type the location you want to move it: ";
-		std::cin >> gm.inputLine;
 		CmdPos to = {};
-		res = ParseMoveCommand(gm.inputLine, &to, gm.errMsg);
-		if (res < 0) {
+		if (PromptPlayerInput(gm, from, to) < 0) {
 			continue;
 		}
 
+		// Move the piece TMP DEBUG code:
 		const Piece fromP = cb.field[from.row][from.col].GetPiece();
 		const Piece toP = cb.field[to.row][to.col].GetPiece();
-
 		cb.field[to.row][to.col].SetPiece(&fromP);
 		cb.field[from.row][from.col].SetPiece(&toP);
 

@@ -17,16 +17,14 @@ ChessBoard::ChessBoard() {
 }
 ChessBoard::~ChessBoard() {}
 
-void ChessBoard::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
-	assert_exp(_dbuf != nullptr);
-	assert_exp(_top < _dbuf->GetHeight());
-	assert_exp(_left < _dbuf->GetWidth());
+void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
+	Displayer::Display(_dbuf, _top, _left);
 
 	// Draw numbers on top of chess board:
 	for (i32 i = 0; i < FIELD_SIZE; i++) {
 		u32 offRow = _top - 1;
 		u32 offCol = i * SQUARE_WIDTH + _left + (SQUARE_WIDTH / 2);
-		_dbuf->SetAt(offRow, offCol, CanonicalPosToChessLetter(i));
+		_dbuf.SetAt(offRow, offCol, CanonicalPosToChessLetter(i));
 	}
 
 	// Draw chess board:
@@ -53,7 +51,7 @@ void ChessBoard::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
 	for (i32 i = 0; i < FIELD_SIZE; i++) {
 		u32 offRow = (i * SQUARE_HEIGHT) + (_top - offsetForNPlusOne) + (SQUARE_HEIGHT / 2);
 		u32 offCol = _left - 2;
-		_dbuf->SetAt(offRow, offCol, U32DigitToChar(FIELD_SIZE - i));
+		_dbuf.SetAt(offRow, offCol, U32DigitToChar(FIELD_SIZE - i));
 		offsetForNPlusOne++;
 	}
 }

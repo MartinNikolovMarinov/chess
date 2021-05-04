@@ -19,7 +19,7 @@ const u32 DISPLAY_WIDTH = CHESSBOARD_WIDTH + 10;
 const u32 DISPLAY_HEIGHT = CHESSBOARD_HEIGHT;
 const u32 DISPLAY_CHESS_CENTER_LEFT = (DISPLAY_WIDTH - CHESSBOARD_WIDTH) / 2;
 
-class ChessBoard {
+class ChessBoard : Displayer {
 private:
 	void initBoardState();
 public:
@@ -28,7 +28,7 @@ public:
 	ChessBoard();
 	~ChessBoard();
 
-	void Display(DisplayBuffer *dbuf, u32 top, u32 left);
+	void Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) override;
 };
 
 #endif

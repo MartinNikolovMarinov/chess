@@ -12,6 +12,8 @@
                 "${workspaceFolder}/piece.cpp",
                 "${workspaceFolder}/square.cpp",
                 "${workspaceFolder}/chess_board.cpp",
+                "${workspaceFolder}/text.cpp",
+                "${workspaceFolder}/game_state.cpp",
                 "-o",
                 "${workspaceFolder}/build/main"
             ],
