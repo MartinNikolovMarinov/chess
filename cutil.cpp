@@ -80,7 +80,7 @@ char CanonicalPosToChessLetter(u32 _n) {
 	}
 }
 
-std::vector<std::string> StrSplit(std::string _s, std::string _delim) {
+std::vector<std::string> Debug_StrSplit(std::string _s, std::string _delim) {
 	std::size_t start = 0U;
     std::size_t end = _s.find(_delim);
 	std::vector<std::string> res;

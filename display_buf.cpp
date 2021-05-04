@@ -36,4 +36,5 @@ void DisplayBuffer::FlushTo(std::ostream& _buf) {
 		}
 		_buf << std::endl;
 	}
+	_buf.flush();
 }

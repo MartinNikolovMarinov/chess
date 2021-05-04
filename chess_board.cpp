@@ -65,19 +65,19 @@ void ChessBoard::initBoardState() {
 	*/
 
 	std::string rawField =
-		"1R 1N 1B 1Q 1K 1B 1N 1R\n"
-		"1P 1P 1P 1P 1P 1P 1P 1P\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
+		"2R 2N 2B 2Q 2K 2B 2N 2R\n"
 		"2P 2P 2P 2P 2P 2P 2P 2P\n"
-		"2R 2N 2B 2Q 2K 2B 2N 2R";
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"1P 1P 1P 1P 1P 1P 1P 1P\n"
+		"1R 1N 1B 1Q 1K 1B 1N 1R";
 
-	auto splitVect = StrSplit(rawField, "\n");
+	auto splitVect = Debug_StrSplit(rawField, "\n");
 	for (i32 row = 0; row < splitVect.size(); row++) {
 		std::string line = splitVect[row];
-		auto lSplitVect = StrSplit(line, " ");
+		auto lSplitVect = Debug_StrSplit(line, " ");
 		for (i32 col = 0; col < lSplitVect.size(); col++) {
 			std::string pieceStr = lSplitVect[col];
 			assert_exp(pieceStr.length() == 2);
@@ -95,71 +95,71 @@ void ChessBoard::initBoardState() {
 	Piece p;
 
 	p = Piece(PieceType::Rook, 1);
-	field[0][0].SetPiece(&p);
-	p = Piece(PieceType::Knight, 1);
-	field[0][1].SetPiece(&p);
-	p = Piece(PieceType::Bishop, 1);
-	field[0][2].SetPiece(&p);
-	p = Piece(PieceType::Queen, 1);
-	field[0][3].SetPiece(&p);
-	p = Piece(PieceType::King, 1);
-	field[0][4].SetPiece(&p);
-	p = Piece(PieceType::Bishop, 1);
-	field[0][5].SetPiece(&p);
-	p = Piece(PieceType::Knight, 1);
-	field[0][6].SetPiece(&p);
-	p = Piece(PieceType::Rook, 1);
-	field[0][7].SetPiece(&p);
-
-	p = Piece(PieceType::Pawn, 1);
-	field[1][0].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][1].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][2].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][3].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][4].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][5].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][6].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 1);
-	field[1][7].SetPiece(&p);
-
-	p = Piece(PieceType::Rook, 2);
 	field[FIELD_SIZE - 1][0].SetPiece(&p);
-	p = Piece(PieceType::Knight, 2);
+	p = Piece(PieceType::Knight, 1);
 	field[FIELD_SIZE - 1][1].SetPiece(&p);
-	p = Piece(PieceType::Bishop, 2);
+	p = Piece(PieceType::Bishop, 1);
 	field[FIELD_SIZE - 1][2].SetPiece(&p);
-	p = Piece(PieceType::Queen, 2);
+	p = Piece(PieceType::Queen, 1);
 	field[FIELD_SIZE - 1][3].SetPiece(&p);
-	p = Piece(PieceType::King, 2);
+	p = Piece(PieceType::King, 1);
 	field[FIELD_SIZE - 1][4].SetPiece(&p);
-	p = Piece(PieceType::Bishop, 2);
+	p = Piece(PieceType::Bishop, 1);
 	field[FIELD_SIZE - 1][5].SetPiece(&p);
-	p = Piece(PieceType::Knight, 2);
+	p = Piece(PieceType::Knight, 1);
 	field[FIELD_SIZE - 1][6].SetPiece(&p);
-	p = Piece(PieceType::Rook, 2);
+	p = Piece(PieceType::Rook, 1);
 	field[FIELD_SIZE - 1][7].SetPiece(&p);
 
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][0].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][1].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][2].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][3].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][4].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][5].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][6].SetPiece(&p);
-	p = Piece(PieceType::Pawn, 2);
+	p = Piece(PieceType::Pawn, 1);
 	field[FIELD_SIZE - 2][7].SetPiece(&p);
+
+	p = Piece(PieceType::Rook, 2);
+	field[0][0].SetPiece(&p);
+	p = Piece(PieceType::Knight, 2);
+	field[0][1].SetPiece(&p);
+	p = Piece(PieceType::Bishop, 2);
+	field[0][2].SetPiece(&p);
+	p = Piece(PieceType::Queen, 2);
+	field[0][3].SetPiece(&p);
+	p = Piece(PieceType::King, 2);
+	field[0][4].SetPiece(&p);
+	p = Piece(PieceType::Bishop, 2);
+	field[0][5].SetPiece(&p);
+	p = Piece(PieceType::Knight, 2);
+	field[0][6].SetPiece(&p);
+	p = Piece(PieceType::Rook, 2);
+	field[0][7].SetPiece(&p);
+
+	p = Piece(PieceType::Pawn, 2);
+	field[1][0].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][1].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][2].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][3].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][4].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][5].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][6].SetPiece(&p);
+	p = Piece(PieceType::Pawn, 2);
+	field[1][7].SetPiece(&p);
 #endif
 }
