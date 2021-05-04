@@ -21,8 +21,8 @@ public:
 	~Square();
 
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
-	void SetPiece(const Piece *piece);
-	const Piece GetPiece() const;
+	void SetPiece(const Piece &piece);
+	const Piece& GetPiece() const;
 };
 
 #endif

@@ -12,12 +12,16 @@ public:
 	std::string inputLine;
 	bool isDone = false;
 	std::string errMsg;
+	MovePos from;
+	MovePos to;
 
 	GameState();
 	GameState(ChessBoard &chessBoard);
 	~GameState();
 
 	void RotatePlayer();
+	const Piece& GetFromPiece();
+	const Piece& GetToPiece();
 	void Clear();
 };
 

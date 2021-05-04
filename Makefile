@@ -1,7 +1,7 @@
 CC    = g++
 SRC   = main.cpp cutil.cpp display_buf.cpp \
 		piece.cpp square.cpp chess_board.cpp \
-		text.cpp game_state.cpp
+		text.cpp game_state.cpp commands.cpp
 CFLAGS = -O0
 
 .PHONY: build

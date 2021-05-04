@@ -2,69 +2,32 @@
 #include "chess_board.h"
 #include "text.h"
 #include "game_state.h"
+#include "commands.h"
 
 // TODO: all the code should be in a common namespace. (probably)
-// TODO: display function is common for all visible/window elements.
+// TODO: add all unnecessary getters and setters to comply to OOP nonsense.
 
-struct Command {
-	Piece p;
-	u32 fromRow, fromCol, toRow, toCol;
-};
-
-struct CmdPos {
-	u32 row;
-	u32 col;
-};
-
-i32 ParseMoveCommand(const std::string& _input, CmdPos *_out, std::string& _errMsg) {
-	if (_input.length() != 2) {
-		_errMsg = "Invalid input format. Try A1 for example.";
-		return -1;
-	};
-
-	char rowChar = _input[0];
-	char colChar = _input[1];
-	i32 row = -1, col = -1;
-	if ('1' <= rowChar && rowChar <= '9') row = ChessDigitToCanonicalPos(rowChar);
-	if ('A' <= colChar && colChar <= 'H') col = ChessLetterToCanonicalPos(colChar);
-
-	if (row == -1) {
-		_errMsg = "Invalid Row.";
+i32 CheckBasicRules(GameState &_gm) {
+	if (_gm.GetFromPiece().IsEmpty()) {
+		_gm.errMsg = "There is not piece at that location.";
 		return -1;
 	}
-	if (col == -1) {
-		_errMsg = "Invalid Col.";
+
+	if (_gm.currPlayer != _gm.GetFromPiece().GetPlayerId()) {
+		_gm.errMsg = "This piece does NOT belong to you.";
 		return -1;
-	};
-
-	_out->row = (u32)row;
-	_out->col = (u32)col;
-	return 0;
-}
-
-i32 PromptPlayerInput(GameState &gm, CmdPos &from, CmdPos &to) {
-	std::cout << "Player " << gm.currPlayer << " make a move!" <<  std::endl;
-	std::cout << "Type row first then col, for example 1A is a valid location." <<  std::endl;
-	std::cout << "Type the location of the peace you want to move: ";
-	std::cin >> gm.inputLine;
-	i32 res = ParseMoveCommand(gm.inputLine, &from, gm.errMsg);
-	if (res < 0) {
-		return res;
 	}
 
-	std::cout << std::endl;
-	std::cout << "Type the location you want to move it: ";
-	std::cin >> gm.inputLine;
-	res = ParseMoveCommand(gm.inputLine, &to, gm.errMsg);
-	if (res < 0) {
-		return res;
+	if (_gm.currPlayer == _gm.GetToPiece().GetPlayerId()) {
+		_gm.errMsg = "You can NOT take your own piece.";
+		return -1;
 	}
 
 	return 0;
 }
 
 int main() {
-    DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+	DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	ChessBoard cb;
 	GameState gm = GameState(cb);
 	TextDisplay mfu = TextDisplay();
@@ -85,7 +48,7 @@ int main() {
 			dbuf.FlushTo(std::cout);
 			gm.errMsg.clear();
 
-			std::cin.get(); // TODO: first get reads the previous enter, for some reason.. can this be fixed?
+			std::cin.get(); // TODO: first call to get reads the previous enter, for some reason.. can this be fixed?
 			while (std::cin.get() != '\n'); // wait for user to press space and ignore any other pressed key.
 			continue;
 		}
@@ -95,17 +58,22 @@ int main() {
 
 		// Prompt the player for input. This blocks the thread
 		// so drawing needs to happen above this line!
-		CmdPos from = {};
-		CmdPos to = {};
-		if (PromptPlayerInput(gm, from, to) < 0) {
+		gm.from = {};
+		gm.to = {};
+		if (PromptPlayerInput(gm, gm.from, gm.to) < 0) {
+			continue;
+		}
+
+		// Check move validity:
+		if (CheckBasicRules(gm) < 0) {
 			continue;
 		}
 
 		// Move the piece TMP DEBUG code:
-		const Piece fromP = cb.field[from.row][from.col].GetPiece();
-		const Piece toP = cb.field[to.row][to.col].GetPiece();
-		cb.field[to.row][to.col].SetPiece(&fromP);
-		cb.field[from.row][from.col].SetPiece(&toP);
+		const Piece fromP = gm.GetFromPiece();
+		// const Piece toP = gm.GetToPiece();
+		cb.field[gm.to.Row][gm.to.Col].SetPiece(fromP);
+		cb.field[gm.from.Row][gm.from.Col].SetPiece(EMPTY_PIECE);
 
 		gm.RotatePlayer();
 	}
