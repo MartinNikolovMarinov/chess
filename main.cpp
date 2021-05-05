@@ -7,6 +7,7 @@
 // TODO: all the code should be in a common namespace. (probably)
 // TODO: should use map instead of a vector for attack positions!
 // TODO: add all unnecessary getters and setters to comply to OOP nonsense.
+// TODO: drop all constants everywhere.
 
 i32 CheckBasicRules(GameState &_gm) {
 	if (_gm.GetFromPiece().IsEmpty()) {
@@ -27,12 +28,30 @@ i32 CheckBasicRules(GameState &_gm) {
 	return 0;
 }
 
+bool CanAttackSquare(const ChessBoard &_cb, u32 _playerId, i32 _currRow, i32 _currCol) {
+	if (_cb.IsInRange(_currRow, _currCol) == false) {
+		return false;
+	}
+	const Piece &currPiece = _cb.GetPieceAt(_currRow, _currCol);
+	bool currPieceIsNone = (currPiece.GetType() == PieceType::None);
+	bool notOurPiece = currPiece.GetPlayerId() != _playerId;
+	return (currPieceIsNone || notOurPiece);
+}
+
+void AddIfAttackPossible(const ChessBoard &_cb, u32 _playerId, i32 _row, i32 _col, std::vector<MovePos> &_attackVect) {
+	bool canAttack = CanAttackSquare(_cb, _playerId, _row, _col);
+	if (canAttack) {
+		MovePos pos = {_row, _col};
+		_attackVect.push_back(pos);
+	}
+}
+
 void CalcAttackVector(const ChessBoard &_cb, // Function can be method of ChessBoard
 	const MovePos &_from, const MovePos &_to, const MovePos &_direction,
 	std::vector<MovePos> &_attackVect
 ) {
-	const Piece &subectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
-	assert_exp(subectPiece.GetType() != PieceType::None);
+	const Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	assert_exp(subjectPiece.GetType() != PieceType::None);
 
 	i32 currRow = _from.Row + _direction.Row;
 	i32 currCol = _from.Col + _direction.Col;
@@ -42,7 +61,8 @@ void CalcAttackVector(const ChessBoard &_cb, // Function can be method of ChessB
 		bool currPieceIsSet = (currPiece.GetType() != PieceType::None);
 		bool reachedDest = (currRow == _to.Row) && (currCol == _to.Col);
 		if (currPieceIsSet || reachedDest) {
-			if (currPiece.GetPlayerId() != subectPiece.GetPlayerId()) {
+			bool notOurPiece = currPiece.GetPlayerId() != subjectPiece.GetPlayerId();
+			if (notOurPiece) {
 				// If current piece is not owned by us, add it to the end result.
 				MovePos pos = {currRow, currCol};
 				_attackVect.push_back(pos);
@@ -85,13 +105,30 @@ void AddQueenAttacks(const ChessBoard &_cb, const MovePos &_from, std::vector<Mo
 	AddBishopAttacks(_cb, _from, _attackVect);
 }
 
+void AddKnightAttacks(const ChessBoard &_cb, const MovePos &_from, std::vector<MovePos> &_attackVect) {
+	i32 currRow, currCol;
+	bool canAttack;
+	const Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	assert_exp(subjectPiece.GetType() != PieceType::None);
+	u32 playerId = subjectPiece.GetPlayerId();
+
+	AddIfAttackPossible(_cb, playerId, _from.Row - 2, _from.Col - 1, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row - 2, _from.Col + 1, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row - 1, _from.Col + 2, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row + 1, _from.Col + 2, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row + 2, _from.Col + 1, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row + 2, _from.Col - 1, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row + 1, _from.Col - 2, _attackVect);
+	AddIfAttackPossible(_cb, playerId, _from.Row - 1, _from.Col - 2, _attackVect);
+}
+
 int main() {
 	ChessBoard cb;
 	GameState gm = GameState(cb);
 
 	std::vector<MovePos> attackMoves;
-	MovePos from = {3, 3};
-	AddQueenAttacks(cb, from, attackMoves);
+	MovePos from = {FIELD_SIZE - 1, FIELD_SIZE - 1};
+	AddKnightAttacks(cb, from, attackMoves);
 
 	cb.Debug_SetColorsForAttack(attackMoves);
 	DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);
