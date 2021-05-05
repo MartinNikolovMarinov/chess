@@ -22,7 +22,6 @@ static const MovePos UP_DIRECTION = {-1, 0};
 static const MovePos DOWN_DIRECTION = {1, 0};
 static const MovePos LEFT_DIRECTION = {0, -1};
 static const MovePos RIGHT_DIRECTION = {0, 1};
-
 static const MovePos UP_LEFT_DIRECTION = {-1, -1};
 static const MovePos DOWN_LEFT_DIRECTION = {1, -1};
 static const MovePos UP_RIGHT_DIRECTION = {-1, 1};
