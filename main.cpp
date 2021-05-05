@@ -60,6 +60,9 @@ void CalcAttackVector(const ChessBoard &_cb, // Function can be method of ChessB
 	bool reachedOccupiedPos = false;
 	while(!reachedDest && !reachedOccupiedPos) {
 		AddIfAttackPossible(_cb, playerId, currRow, currCol, _attackVect);
+		if (!_cb.IsInRange(currRow, currCol)) {
+			break;
+		}
 		reachedOccupiedPos = _cb.GetPieceTypeAt(currRow, currCol) != PieceType::None;
 		reachedDest = (currRow == _to.Row) && (currCol == _to.Col);
 		currRow += _direction.Row;
@@ -127,13 +130,28 @@ void AddKingAttacks(const ChessBoard &_cb, const MovePos &_from, std::vector<Mov
 	AddIfAttackPossible(_cb, playerId, _from.Row + DOWN_RIGHT_DIRECTION.Row, _from.Col + DOWN_RIGHT_DIRECTION.Col, _attackVect);
 }
 
+void AddPawnkAttacks(const ChessBoard &_cb, const MovePos &_from, std::vector<MovePos> &_attackVect) {
+	bool canAttack;
+	const Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	assert_exp(subjectPiece.GetType() != PieceType::None);
+	u32 playerId = subjectPiece.GetPlayerId();
+
+	if (playerId == 1) {
+		AddIfAttackPossible(_cb, playerId, _from.Row + UP_LEFT_DIRECTION.Row, _from.Col + UP_LEFT_DIRECTION.Col, _attackVect);
+		AddIfAttackPossible(_cb, playerId, _from.Row + UP_RIGHT_DIRECTION.Row, _from.Col + UP_RIGHT_DIRECTION.Col, _attackVect);
+	} else {
+		AddIfAttackPossible(_cb, playerId, _from.Row + DOWN_LEFT_DIRECTION.Row, _from.Col + DOWN_LEFT_DIRECTION.Col, _attackVect);
+		AddIfAttackPossible(_cb, playerId, _from.Row + DOWN_RIGHT_DIRECTION.Row, _from.Col + DOWN_RIGHT_DIRECTION.Col, _attackVect);
+	}
+}
+
 int main() {
 	ChessBoard cb;
 	GameState gm = GameState(cb);
 
 	std::vector<MovePos> attackVect;
-	MovePos from = {3, 3};
-	AddKingAttacks(cb, from, attackVect);
+	MovePos from = {4, 4};
+	AddQueenAttacks(cb, from, attackVect);
 
 	cb.Debug_SetColorsForAttack(attackVect);
 	DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);

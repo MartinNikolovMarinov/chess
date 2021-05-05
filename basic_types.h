@@ -16,7 +16,7 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
-struct MovePos { i32 Row, Col; };
+struct MovePos { i32 Row, Col; }; // TODO: could implement some operator overloading for MovePos
 
 static const MovePos UP_DIRECTION = {-1, 0};
 static const MovePos DOWN_DIRECTION = {1, 0};
