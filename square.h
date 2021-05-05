@@ -8,6 +8,7 @@
 enum SquareColor : u8 {
 	Black = 0,
 	White = 1,
+	Debug = 2,
 };
 
 class Square : Displayer {
@@ -24,7 +25,9 @@ public:
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
 	void SetPiece(const Piece &piece);
 	bool GetEnPassant() const;
-	void SetEnPassant(bool _v);
+	void SetEnPassant(bool value);
+	SquareColor GetColor() const;
+	void SetColor(SquareColor color);
 	const Piece& GetPiece() const;
 };
 

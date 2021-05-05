@@ -16,6 +16,7 @@ u32 ChessDigitToCanonicalPos(char _c);
 u32 ChessLetterToCanonicalPos(char _c);
 char CanonicalPosToChessLetter(u32 _n);
 void ClearScreen();
+
 std::vector<std::string> Debug_StrSplit(const std::string &_s, const std::string &_delim);
 
 #endif

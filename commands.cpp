@@ -21,8 +21,8 @@ i32 ParseMoveCommand(const std::string &_input, MovePos &_out, std::string &_err
 		return -1;
 	};
 
-	_out.Row = (u32)row;
-	_out.Col = (u32)col;
+	_out.Row = row;
+	_out.Col = col;
 	return 0;
 }
 

@@ -20,8 +20,8 @@ public:
 	~GameState();
 
 	void RotatePlayer();
-	const Piece& GetFromPiece();
-	const Piece& GetToPiece();
+	const Piece& GetFromPiece() const;
+	const Piece& GetToPiece() const;
 	void Clear();
 };
 

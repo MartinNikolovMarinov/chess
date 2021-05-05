@@ -17,6 +17,24 @@ ChessBoard::ChessBoard() {
 }
 ChessBoard::~ChessBoard() {}
 
+const Piece& ChessBoard::GetPieceAt(i32 _row, i32 _col) const {
+	assert_exp(this->IsInRange(_row, _col));
+	const Piece &ret = field[_row][_col].GetPiece();
+	return ret;
+}
+
+PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) const {
+	const Piece &p = this->GetPieceAt(_row, _col);
+	PieceType ret = p.GetType();
+	return ret;
+}
+
+bool ChessBoard::IsInRange(i32 _row, i32 _col) const {
+	bool rowInRange = 0 <= _row && _row < FIELD_SIZE;
+	bool colInRange = 0 <= _col && _col < FIELD_SIZE;
+	return rowInRange && colInRange;
+}
+
 void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);
 
@@ -62,15 +80,25 @@ void ChessBoard::initBoardState() {
 		This slow/bad code is here for debugging convenience, until the final algorithm is done!
 	*/
 
+	// std::string rawField =
+	// 	"2R 2N 2B 2Q 2K 2B 2N 2R\n"
+	// 	"2P 2P 2P 2P 2P 2P 2P 2P\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"1P 1P 1P 1P 1P 1P 1P 1P\n"
+	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
+
 	std::string rawField =
-		"2R 2N 2B 2Q 2K 2B 2N 2R\n"
-		"2P 2P 2P 2P 2P 2P 2P 2P\n"
+		"1K 00 00 00 00 00 00 1P\n"
+		"00 00 00 00 00 2P 00 00\n"
+		"00 00 00 00 2P 00 00 00\n"
+		"00 00 00 1Q 00 1P 00 00\n"
+		"00 00 1P 1P 1P 00 00 00\n"
+		"00 00 00 00 00 1P 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"1P 1P 1P 1P 1P 1P 1P 1P\n"
-		"1R 1N 1B 1Q 1K 1B 1N 1R";
+		"1B 00 00 00 00 00 00 00";
 
 	auto splitVect = Debug_StrSplit(rawField, "\n");
 	for (i32 row = 0; row < splitVect.size(); row++) {
@@ -160,4 +188,11 @@ void ChessBoard::initBoardState() {
 	p = Piece(PieceType::Pawn, 2);
 	field[1][7].SetPiece(&p);
 #endif
+}
+
+void ChessBoard::Debug_SetColorsForAttack(const std::vector<MovePos> &_av) {
+	for (auto move : _av) {
+		Square* s = &field[move.Row][move.Col];
+		(*s).SetColor(SquareColor::Debug);
+	}
 }

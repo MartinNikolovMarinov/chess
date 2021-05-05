@@ -7,12 +7,12 @@ void GameState::Clear() {
 	inputLine.clear();
 }
 
-const Piece& GameState::GetFromPiece() {
-	const Piece& ret = chessBoard->field[from.Row][from.Col].GetPiece();
+const Piece& GameState::GetFromPiece() const {
+	const Piece& ret = chessBoard->GetPieceAt(from.Row, from.Col);
 	return ret;
 }
 
-const Piece& GameState::GetToPiece() {
-	const Piece& ret = chessBoard->field[to.Row][to.Col].GetPiece();
+const Piece& GameState::GetToPiece() const {
+	const Piece& ret = chessBoard->GetPieceAt(to.Row, to.Col);
 	return ret;
 }

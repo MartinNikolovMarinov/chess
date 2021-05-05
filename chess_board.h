@@ -22,13 +22,18 @@ const u32 DISPLAY_CHESS_CENTER_LEFT = (DISPLAY_WIDTH - CHESSBOARD_WIDTH) / 2;
 class ChessBoard : Displayer {
 private:
 	void initBoardState();
-public:
 	Square field[FIELD_SIZE][FIELD_SIZE];
+public:
 
 	ChessBoard();
 	~ChessBoard();
 
+	PieceType GetPieceTypeAt(i32 row, i32 col) const;
+	const Piece& GetPieceAt(i32 row, i32 col) const;
+	bool IsInRange(i32 row, i32 col) const;
 	void Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) override;
+
+	void Debug_SetColorsForAttack(const std::vector<MovePos> &_av);
 };
 
 #endif

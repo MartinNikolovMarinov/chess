@@ -14,6 +14,8 @@ Square::~Square() {}
 
 bool Square::GetEnPassant() const { return enPassant; }
 void Square::SetEnPassant(bool _v) { enPassant = _v; }
+SquareColor Square::GetColor() const { return color; }
+void Square::SetColor(SquareColor _c) { color = _c; }
 
 void Square::SetPiece(const Piece &_p) {
 	piece.SetType(_p.GetType());
@@ -62,5 +64,17 @@ void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 		u32 offCol = col + _left;
 		if (col == 0 || col == width - 1) _dbuf.SetAt(offRow, offCol, '|');
 		else _dbuf.SetAt(offRow, offCol, '-');
+	}
+
+	// Draw color indication
+	switch (this->color) {
+		case SquareColor::Black:
+			// _dbuf.SetAt(_top + 1, _left + 1, '*');
+			break;
+		case SquareColor::Debug:
+			_dbuf.SetAt(_top + 1, _left + 1, '~');
+			break;
+		default:
+			break;
 	}
 }
