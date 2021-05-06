@@ -7,7 +7,6 @@
 // TODO: all the code should be in a common namespace. (probably)
 // TODO: should use map instead of a vector for attack positions!
 // TODO: add all unnecessary getters and setters to comply to OOP nonsense.
-// TODO: drop all constants everywhere.
 
 #include "move_rules.h"
 

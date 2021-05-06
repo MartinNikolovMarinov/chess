@@ -5,8 +5,6 @@
 #include "basic_types.h"
 #include "move_rules.h"
 
-typedef void(*PieceVisitFn)(const Piece&);
-
 class GameState
 {
 public:
@@ -39,8 +37,6 @@ public:
 	i32 CheckBasicRules();
 
 	void CalcCurrUserAttackVect();
-
-	void VisitAllPlayerPices(u32 _pid, PieceVisitFn _vFn);
 };
 
 #endif

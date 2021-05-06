@@ -25,13 +25,13 @@ public:
 	Piece(PieceType type, i32 playerId);
 	~Piece();
 
-	PieceType GetType() const;
+	PieceType GetType();
 	void SetType(PieceType type);
-	i32 GetPlayerId() const;
+	i32 GetPlayerId();
 	void SetPlayerId(i32 playerId);
-	bool GetEnPassant() const;
+	bool GetEnPassant();
 	void SetEnPassant(bool v);
-	bool IsEmpty() const;
+	bool IsEmpty();
 };
 
 static const Piece EMPTY_PIECE;

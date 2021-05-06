@@ -8,10 +8,10 @@ Piece::Piece(const Piece &p) {
 }
 Piece::~Piece() {}
 
-PieceType Piece::GetType() const { return type; }
+PieceType Piece::GetType() { return type; }
 void Piece::SetType(PieceType _t) { type = _t; }
 
-i32 Piece::GetPlayerId() const { return playerId; }
+i32 Piece::GetPlayerId() { return playerId; }
 void Piece::SetPlayerId(i32 _pid) { playerId = _pid; }
 
-bool Piece::IsEmpty() const { return type == PieceType::None; }
+bool Piece::IsEmpty() { return type == PieceType::None; }

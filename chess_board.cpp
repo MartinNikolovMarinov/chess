@@ -29,7 +29,7 @@ void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece &p) {
 }
 
 PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) {
-	const Piece &p = this->GetPieceAt(_row, _col);
+	Piece &p = this->GetPieceAt(_row, _col);
 	PieceType ret = p.GetType();
 	return ret;
 }
@@ -44,7 +44,7 @@ bool ChessBoard::CanAttackSquare(u32 _playerId, i32 _row, i32 _col) {
 	if (this->IsInRange(_row, _col) == false) {
 		return false;
 	}
-	const Piece &currPiece = this->GetPieceAt(_row, _col);
+	Piece &currPiece = this->GetPieceAt(_row, _col);
 	bool currPieceIsNone = (currPiece.GetType() == PieceType::None);
 	bool notOurPiece = currPiece.GetPlayerId() != _playerId;
 	return (currPieceIsNone || notOurPiece);
@@ -59,7 +59,7 @@ void ChessBoard::PushIfAttackPossible(u32 _pid, i32 _row, i32 _col, std::vector<
 }
 
 void ChessBoard::CalcAttackVector(const MovePos &_from, const MovePos &_to, const MovePos &_direction, std::vector<MovePos> &_av) {
-	const Piece &subjectPiece = this->GetPieceAt(_from.Row, _from.Col);
+	Piece &subjectPiece = this->GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 
 	u32 playerId = subjectPiece.GetPlayerId();
