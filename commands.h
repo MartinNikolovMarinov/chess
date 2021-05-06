@@ -7,7 +7,7 @@
 #include "cutil.h"
 #include "game_state.h"
 
-i32 ParseMoveCommand(const std::string &input, MovePos &out, std::string &outErrMsg);
-i32 PromptPlayerInput(GameState &gameState, MovePos &from, MovePos &to);
+i32 ParseMoveCommand(const std::string &input, FieldPos &out, std::string &outErrMsg);
+i32 PromptPlayerInput(GameState &gameState, FieldPos &from, FieldPos &to);
 
 #endif

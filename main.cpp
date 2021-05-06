@@ -4,6 +4,9 @@
 #include "game_state.h"
 #include "commands.h"
 
+// TODO: implement move vector calcuations.
+// TODO: implement "game is over" logic.
+
 // TODO: all the code should be in a common namespace. (probably)
 // TODO: should use map instead of a vector for attack positions!
 // TODO: add all unnecessary getters and setters to comply to OOP nonsense.
@@ -41,8 +44,11 @@ int main() {
 			continue;
 		}
 
-		// FIXME: TMP code
-		gm.CalcCurrUserAttackVect();
+		// FIXME: TMP code, This should probably be below the render, but it's here because of the debug ~ render.
+		gm.CalcOpponentAttackVect();
+		if (gm.IsCurrPlayerInCheck()) {
+			std::cout<<"You are in check"<<std::endl;
+		}
 		// --FIXME: TMP code
 
 		// Render to screen:

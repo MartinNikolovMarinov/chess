@@ -6,7 +6,8 @@ ChessBoard::ChessBoard() {
 	for (i32 row = 0; row < FIELD_SIZE; row++) {
 		for (i32 col = 0; col < FIELD_SIZE; col++) {
 			SquareColor color = isWhite ? SquareColor::White : SquareColor::Black;
-			field[row][col] = Square(SQUARE_WIDTH, SQUARE_HEIGHT, color, emptyPiece);
+			FieldPos pos = {row, col};
+			field[row][col] = Square(SQUARE_WIDTH, SQUARE_HEIGHT, color, emptyPiece, pos);
 			isWhite = !isWhite;
 		}
 
@@ -23,15 +24,21 @@ Piece& ChessBoard::GetPieceAt(i32 _row, i32 _col) {
 	return ret;
 }
 
-void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece &p) {
+void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece &_p) {
 	assert_exp(this->IsInRange(_row, _col));
-	field[_row][_col].SetPiece(p);
+	field[_row][_col].SetPiece(_p);
 }
 
 PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) {
 	Piece &p = this->GetPieceAt(_row, _col);
 	PieceType ret = p.GetType();
 	return ret;
+}
+
+Square& ChessBoard::GetSquareAt(i32 _row, i32 _col) {
+	assert_exp(this->IsInRange(_row, _col));
+	Square& sqr= field[_row][_col];
+	return sqr;
 }
 
 bool ChessBoard::IsInRange(i32 _row, i32 _col) {
@@ -50,15 +57,15 @@ bool ChessBoard::CanAttackSquare(u32 _playerId, i32 _row, i32 _col) {
 	return (currPieceIsNone || notOurPiece);
 }
 
-void ChessBoard::PushIfAttackPossible(u32 _pid, i32 _row, i32 _col, std::vector<MovePos> &_av) {
+void ChessBoard::PushIfAttackPossible(u32 _pid, i32 _row, i32 _col, std::vector<FieldPos> &_av) {
 	bool canAttack = this->CanAttackSquare(_pid, _row, _col);
 	if (canAttack) {
-		MovePos pos = {_row, _col};
+		FieldPos pos = {_row, _col};
 		_av.push_back(pos);
 	}
 }
 
-void ChessBoard::CalcAttackVector(const MovePos &_from, const MovePos &_to, const MovePos &_direction, std::vector<MovePos> &_av) {
+void ChessBoard::CalcAttackVector(const FieldPos &_from, const FieldPos &_to, const FieldPos &_direction, std::vector<FieldPos> &_av) {
 	Piece &subjectPiece = this->GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 
@@ -99,7 +106,7 @@ void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	u32 offsetForNPlusOne = 0;
 	for (i32 row = 0; row < FIELD_SIZE; row++) {
 		for (i32 col = 0; col < FIELD_SIZE; col++) {
-			Square curr = field[row][col];
+			Square &curr = field[row][col];
 			u32 offRow = (row * SQUARE_HEIGHT) + _top - offsetForNPlusOne;
 			u32 offCol = (col * SQUARE_WIDTH) + _left;
 			curr.Display(_dbuf, offRow, offCol);
@@ -135,14 +142,14 @@ void ChessBoard::initBoardState() {
 	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
 
 	std::string rawField =
-		"00 00 00 00 00 00 1R 00\n"
-		"00 00 00 00 00 2Q 00 00\n"
-		"00 00 1B 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 1Q 00 1P 00\n"
 		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 2P 00 00 00\n"
-		"00 00 00 00 00 00 00 00";
+		"00 00 00 1K 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 2R 00 00 00 00\n"
+		"00 00 00 00 00 00 00 2K";
 
 	auto splitVect = Debug_StrSplit(rawField, "\n");
 	for (i32 row = 0; row < splitVect.size(); row++) {
@@ -234,7 +241,7 @@ void ChessBoard::initBoardState() {
 #endif
 }
 
-void ChessBoard::Debug_SetColorsForAttack(const std::vector<MovePos> &_av) {
+void ChessBoard::Debug_SetColorsForAttack(const std::vector<FieldPos> &_av) {
 	for (auto move : _av) {
 		Square* s = &field[move.Row][move.Col];
 		(*s).SetColor(SquareColor::Debug);

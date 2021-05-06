@@ -18,13 +18,13 @@ public:
 
 	// TODO: write pointless getters and setters for:
 	u32 currPlayer = 1;
-	std::vector<MovePos> currPlayerAttackVect;
-	std::string inputLine; // from user
-	std::string errMsg; // for user
+	std::vector<FieldPos> opponentAttackVect;
+	std::string cmdInputLine;
+	std::string errMsg;
 
 	bool isGameOver = false;
-	MovePos currMovingFrom;
-	MovePos currMovingTo;
+	FieldPos currMovingFrom;
+	FieldPos currMovingTo;
 
 	GameState();
 	GameState(ChessBoard &chessBoard, MovementRules &movementRules);
@@ -36,7 +36,11 @@ public:
 	void Clear();
 	i32 CheckBasicRules();
 
-	void CalcCurrUserAttackVect();
+	void GetPlayerSquares(u32 playerId, std::vector<Square*> &out);
+	void CalcOpponentAttackVect();
+	bool IsCurrPlayerInCheck();
 };
+
+FieldPos FindKingSquare(const std::vector<Square*> _squares);
 
 #endif

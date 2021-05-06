@@ -1,16 +1,16 @@
 #include "move_rules.h"
 
-void pushRookAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_av);
-void pushBishopAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect);
-void pushQueenAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect);
-void pushKnightAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect);
-void pushKingAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect);
-void pushPawnkAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect);
+void pushRookAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av);
+void pushBishopAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect);
+void pushQueenAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect);
+void pushKnightAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect);
+void pushKingAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect);
+void pushPawnkAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect);
 
 MovementRules::MovementRules() {}
 MovementRules::~MovementRules() {}
 
-void MovementRules::PushPieceLegalAttacks(ChessBoard &_cb, Piece &_piece, MovePos &_pos, std::vector<MovePos> &_av) {
+void MovementRules::PushPieceLegalAttacks(ChessBoard &_cb, Piece &_piece, FieldPos &_pos, std::vector<FieldPos> &_av) {
 	switch (_piece.GetType()) {
 		case PieceType::Pawn:
 			pushPawnkAttacks(_cb, _pos, _av);
@@ -37,8 +37,8 @@ void MovementRules::PushPieceLegalAttacks(ChessBoard &_cb, Piece &_piece, MovePo
 	}
 }
 
-void pushRookAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_av) {
-	MovePos to = {FIELD_SIZE - 1, _from.Col};
+void pushRookAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
+	FieldPos to = {FIELD_SIZE - 1, _from.Col};
 	_cb.CalcAttackVector(_from, to, RIGHT_DIRECTION, _av);
 	to = {_from.Row, FIELD_SIZE - 1};
 	_cb.CalcAttackVector(_from, to, DOWN_DIRECTION, _av);
@@ -48,8 +48,8 @@ void pushRookAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_av)
 	_cb.CalcAttackVector(_from, to, LEFT_DIRECTION, _av);
 }
 
-void pushBishopAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect) {
-	MovePos to = {0, 0};
+void pushBishopAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect) {
+	FieldPos to = {0, 0};
 	_cb.CalcAttackVector(_from, to, UP_LEFT_DIRECTION, _attackVect);
 	to = {0, FIELD_SIZE - 1};
 	_cb.CalcAttackVector(_from, to, UP_RIGHT_DIRECTION, _attackVect);
@@ -59,12 +59,12 @@ void pushBishopAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_a
 	_cb.CalcAttackVector(_from, to, DOWN_RIGHT_DIRECTION, _attackVect);
 }
 
-void pushQueenAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect) {
+void pushQueenAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect) {
 	pushRookAttacks(_cb, _from, _attackVect);
 	pushBishopAttacks(_cb, _from, _attackVect);
 }
 
-void pushKnightAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect) {
+void pushKnightAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect) {
 	i32 currRow, currCol;
 	bool canAttack;
 	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
@@ -81,7 +81,7 @@ void pushKnightAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_a
 	_cb.PushIfAttackPossible(playerId, _from.Row - 1, _from.Col - 2, _attackVect);
 }
 
-void pushKingAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect) {
+void pushKingAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect) {
 	bool canAttack;
 	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
@@ -97,7 +97,7 @@ void pushKingAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_att
 	_cb.PushIfAttackPossible(playerId, _from.Row + DOWN_RIGHT_DIRECTION.Row, _from.Col + DOWN_RIGHT_DIRECTION.Col, _attackVect);
 }
 
-void pushPawnkAttacks(ChessBoard &_cb, MovePos &_from, std::vector<MovePos> &_attackVect) {
+void pushPawnkAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_attackVect) {
 	bool canAttack;
 	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);

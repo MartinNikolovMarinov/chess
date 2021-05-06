@@ -4,8 +4,8 @@ GameState::GameState(ChessBoard &_cb, MovementRules &_mv) : chessBoard(_cb), mov
 GameState::~GameState() {}
 void GameState::RotatePlayer() { currPlayer = ((currPlayer == 1) ? 2 : 1); }
 void GameState::Clear() {
-	inputLine.clear();
-	currPlayerAttackVect.clear();
+	cmdInputLine.clear();
+	opponentAttackVect.clear();
 }
 
 Piece& GameState::GetFromPiece() {
@@ -38,19 +38,63 @@ i32 GameState::CheckBasicRules() {
 	return 0;
 }
 
-void GameState::CalcCurrUserAttackVect() {
+void GameState::GetPlayerSquares(u32 _pid, std::vector<Square*> &_out) {
 	for (i32 row = 0; row < FIELD_SIZE; row++) {
 		for (i32 col = 0; col < FIELD_SIZE; col++) {
-			Piece &p = chessBoard.GetPieceAt(row, col);
-			if (p.GetPlayerId() == currPlayer) {
-				// currPlayerPieces.push_back(p);
-				MovePos pos = {row, col};
-				movementRules.PushPieceLegalAttacks(chessBoard, p, pos, currPlayerAttackVect);
+			Square& sqr = chessBoard.GetSquareAt(row, col);
+			Piece& p = sqr.GetPiece();
+			if (p.GetPlayerId() == _pid) {
+				_out.push_back(&sqr);
 			}
 		}
 	}
+}
+
+void GameState::CalcOpponentAttackVect() {
+	std::vector<Square*> squares;
+	u32 opponentId = currPlayer == 1 ? 2 : 1;
+	this->GetPlayerSquares(opponentId, squares);
+
+	for (i32 i = 0; i < squares.size(); i++) {
+		Square *sqr = squares[i];
+		assert_exp(sqr != nullptr);
+		Piece& p = sqr->GetPiece();
+		FieldPos pos = sqr->GetPos();
+		movementRules.PushPieceLegalAttacks(chessBoard, p, pos,  opponentAttackVect);
+	}
 
 	// FIXME: TMP code
-	chessBoard.Debug_SetColorsForAttack(currPlayerAttackVect);
+	chessBoard.Debug_SetColorsForAttack(opponentAttackVect);
 	// --FIXME: TMP code
+}
+
+bool GameState::IsCurrPlayerInCheck() {
+	auto oattv = this->opponentAttackVect;
+	std::vector<Square*> squares;
+	this->GetPlayerSquares(currPlayer, squares);
+	FieldPos kingPos = FindKingSquare(squares);
+
+	for (i32 i = 0; i < oattv.size(); i++) {
+		FieldPos attackedPos = oattv[i];
+		if (attackedPos == kingPos) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+FieldPos FindKingSquare(const std::vector<Square*> _squares) {
+	for (i32 i = 0; i < _squares.size(); i++) {
+		Square *sqr = _squares[i];
+		assert_exp(sqr != nullptr);
+		Piece &p = sqr->GetPiece();
+		FieldPos &fp = sqr->GetPos();
+		if (p.GetType() == PieceType::King) {
+			return fp;
+		}
+	}
+
+	assert_exp(!"Should always have a king");
+	return (FieldPos&)ZERO_POS;
 }

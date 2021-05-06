@@ -31,14 +31,15 @@ public:
 
 	PieceType GetPieceTypeAt(i32 row, i32 col);
 	Piece& GetPieceAt(i32 row, i32 col);
-	void SetPieceAt(i32 _row, i32 _col, const Piece &p);
+	void SetPieceAt(i32 row, i32 col, const Piece &p);
+	Square& GetSquareAt(i32 row, i32 col);
 	bool IsInRange(i32 row, i32 col);
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
 	bool CanAttackSquare(u32 playerId, i32 attackedRow, i32 attackedCol);
-	void PushIfAttackPossible(u32 playerId, i32 attackedRow, i32 attackedCol, std::vector<MovePos> &attackVect);
-	void CalcAttackVector(const MovePos &from, const MovePos &to, const MovePos &direction, std::vector<MovePos> &attackVect);
+	void PushIfAttackPossible(u32 playerId, i32 attackedRow, i32 attackedCol, std::vector<FieldPos> &attackVect);
+	void CalcAttackVector(const FieldPos &from, const FieldPos &to, const FieldPos &direction, std::vector<FieldPos> &attackVect);
 
-	void Debug_SetColorsForAttack(const std::vector<MovePos> &_av);
+	void Debug_SetColorsForAttack(const std::vector<FieldPos> &_av);
 	void Debug_RemoveDebugColorsFromBoard();
 };
 

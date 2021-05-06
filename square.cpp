@@ -1,13 +1,17 @@
 #include "square.h"
 
 Square::Square() {}
-Square::Square(u32 _w, u32 _h, SquareColor _c, const Piece &_p) : color(_c) {
+Square::Square(u32 _w, u32 _h, SquareColor _c, const Piece &_p, const FieldPos &_pos)
+	: color(_c)
+{
 	// We need at least 3 by 3 square to be able to display a pieace in the square:
 	assert_exp(_w >= 3);
 	assert_exp(_h >= 3);
 
 	width = _w;
 	height = _h;
+	pos.Row = _pos.Row;
+	pos.Col = _pos.Col;
 	this->SetPiece(_p);
 }
 Square::~Square() {}
@@ -17,10 +21,8 @@ void Square::SetEnPassant(bool _v) { enPassant = _v; }
 SquareColor Square::GetColor() { return color; }
 void Square::SetColor(SquareColor _c) { color = _c; }
 void Square::SetPiece(const Piece &_p) { piece = Piece(_p); }
-
-Piece& Square::GetPiece() {
-	return piece;
-}
+Piece& Square::GetPiece() { return piece; }
+FieldPos& Square::GetPos() { return pos; }
 
 void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);

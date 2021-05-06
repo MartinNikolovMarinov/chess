@@ -16,15 +16,43 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
-struct MovePos { i32 Row, Col; }; // TODO: could implement some operator overloading for MovePos
+struct FieldPos {
+    i32 Row, Col;
 
-static const MovePos UP_DIRECTION = {-1, 0};
-static const MovePos DOWN_DIRECTION = {1, 0};
-static const MovePos LEFT_DIRECTION = {0, -1};
-static const MovePos RIGHT_DIRECTION = {0, 1};
-static const MovePos UP_LEFT_DIRECTION = {-1, -1};
-static const MovePos DOWN_LEFT_DIRECTION = {1, -1};
-static const MovePos UP_RIGHT_DIRECTION = {-1, 1};
-static const MovePos DOWN_RIGHT_DIRECTION = {1, 1};
+    FieldPos operator+(FieldPos rhs) {
+        FieldPos res = { Row + rhs.Row, Col + rhs.Col };
+        return res;
+    }
+    FieldPos operator+=(FieldPos rhs) {
+        Row += rhs.Row;
+        Col += rhs.Col;
+        return *this;
+    }
+    FieldPos operator-(FieldPos rhs) {
+        FieldPos res = { Row - rhs.Row, Col - rhs.Col };
+        return res;
+    }
+    FieldPos operator-=(FieldPos rhs) {
+        Row -= rhs.Row;
+        Col -= rhs.Col;
+        return *this;
+    }
+    bool operator==(FieldPos rhs) {
+        return (Row == rhs.Row && Col == rhs.Col);
+    }
+    bool operator!=(FieldPos rhs) {
+        return (Row != rhs.Row || Col != rhs.Col);
+    }
+};
+
+static const FieldPos ZERO_POS = {0, 0};
+static const FieldPos UP_DIRECTION = {-1, 0};
+static const FieldPos DOWN_DIRECTION = {1, 0};
+static const FieldPos LEFT_DIRECTION = {0, -1};
+static const FieldPos RIGHT_DIRECTION = {0, 1};
+static const FieldPos UP_LEFT_DIRECTION = {-1, -1};
+static const FieldPos DOWN_LEFT_DIRECTION = {1, -1};
+static const FieldPos UP_RIGHT_DIRECTION = {-1, 1};
+static const FieldPos DOWN_RIGHT_DIRECTION = {1, 1};
 
 #endif

@@ -17,9 +17,10 @@ private:
 	SquareColor color;
 	Piece piece;
 	bool enPassant;
+	FieldPos pos;
 public:
 	Square();
-	Square(u32 width, u32 height, SquareColor color, const Piece &piece);
+	Square(u32 width, u32 height, SquareColor color, const Piece &piece, const FieldPos &pos);
 	~Square();
 
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
@@ -29,6 +30,7 @@ public:
 	SquareColor GetColor();
 	void SetColor(SquareColor color);
 	Piece& GetPiece();
+	FieldPos& GetPos();
 };
 
 #endif
