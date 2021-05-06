@@ -12,17 +12,13 @@ Square::Square(u32 _w, u32 _h, SquareColor _c, const Piece &_p) : color(_c) {
 }
 Square::~Square() {}
 
-bool Square::GetEnPassant() const { return enPassant; }
+bool Square::GetEnPassant() { return enPassant; }
 void Square::SetEnPassant(bool _v) { enPassant = _v; }
-SquareColor Square::GetColor() const { return color; }
+SquareColor Square::GetColor() { return color; }
 void Square::SetColor(SquareColor _c) { color = _c; }
+void Square::SetPiece(const Piece &_p) { piece = Piece(_p); }
 
-void Square::SetPiece(const Piece &_p) {
-	piece.SetType(_p.GetType());
-	piece.SetPlayerId(_p.GetPlayerId());
-}
-
-const Piece& Square::GetPiece() const {
+Piece& Square::GetPiece() {
 	return piece;
 }
 

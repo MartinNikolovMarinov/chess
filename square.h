@@ -24,11 +24,11 @@ public:
 
 	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
 	void SetPiece(const Piece &piece);
-	bool GetEnPassant() const;
+	bool GetEnPassant();
 	void SetEnPassant(bool value);
-	SquareColor GetColor() const;
+	SquareColor GetColor();
 	void SetColor(SquareColor color);
-	const Piece& GetPiece() const;
+	Piece& GetPiece();
 };
 
 #endif

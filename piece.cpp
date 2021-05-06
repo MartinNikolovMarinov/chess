@@ -2,6 +2,10 @@
 
 Piece::Piece() : type(PieceType::None), playerId(-1) {}
 Piece::Piece(PieceType _t, i32 _pid) : type(_t), playerId(_pid) {}
+Piece::Piece(const Piece &p) {
+    this->type = p.type;
+    this->playerId = p.playerId;
+}
 Piece::~Piece() {}
 
 PieceType Piece::GetType() const { return type; }

@@ -3,26 +3,44 @@
 
 #include "chess_board.h"
 #include "basic_types.h"
+#include "move_rules.h"
+
+typedef void(*PieceVisitFn)(const Piece&);
 
 class GameState
 {
 public:
-	ChessBoard *chessBoard;
+	// IMPORTANT:
+	// This kind of references should be shared pointers.
+	// But the current implementation just keeps memory for them on the stack
+	// and keeps them alive until the probgram ends.
+	// Which means that referencing freed memory is not likely.
+	ChessBoard &chessBoard;
+	MovementRules &movementRules;
+
+	// TODO: write pointless getters and setters for:
 	u32 currPlayer = 1;
-	std::string inputLine;
-	bool isDone = false;
-	std::string errMsg;
-	MovePos from;
-	MovePos to;
+	std::vector<MovePos> currPlayerAttackVect;
+	std::string inputLine; // from user
+	std::string errMsg; // for user
+
+	bool isGameOver = false;
+	MovePos currMovingFrom;
+	MovePos currMovingTo;
 
 	GameState();
-	GameState(ChessBoard &chessBoard);
+	GameState(ChessBoard &chessBoard, MovementRules &movementRules);
 	~GameState();
 
 	void RotatePlayer();
-	const Piece& GetFromPiece() const;
-	const Piece& GetToPiece() const;
+	Piece& GetFromPiece();
+	Piece& GetToPiece();
 	void Clear();
+	i32 CheckBasicRules();
+
+	void CalcCurrUserAttackVect();
+
+	void VisitAllPlayerPices(u32 _pid, PieceVisitFn _vFn);
 };
 
 #endif

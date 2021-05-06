@@ -21,19 +21,25 @@ const u32 DISPLAY_CHESS_CENTER_LEFT = (DISPLAY_WIDTH - CHESSBOARD_WIDTH) / 2;
 
 class ChessBoard : Displayer {
 private:
-	void initBoardState();
 	Square field[FIELD_SIZE][FIELD_SIZE];
+
+	void initBoardState();
 public:
 
 	ChessBoard();
 	~ChessBoard();
 
-	PieceType GetPieceTypeAt(i32 row, i32 col) const;
-	const Piece& GetPieceAt(i32 row, i32 col) const;
-	bool IsInRange(i32 row, i32 col) const;
-	void Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) override;
+	PieceType GetPieceTypeAt(i32 row, i32 col);
+	Piece& GetPieceAt(i32 row, i32 col);
+	void SetPieceAt(i32 _row, i32 _col, const Piece &p);
+	bool IsInRange(i32 row, i32 col);
+	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
+	bool CanAttackSquare(u32 playerId, i32 attackedRow, i32 attackedCol);
+	void PushIfAttackPossible(u32 playerId, i32 attackedRow, i32 attackedCol, std::vector<MovePos> &attackVect);
+	void CalcAttackVector(const MovePos &from, const MovePos &to, const MovePos &direction, std::vector<MovePos> &attackVect);
 
 	void Debug_SetColorsForAttack(const std::vector<MovePos> &_av);
+	void Debug_RemoveDebugColorsFromBoard();
 };
 
 #endif

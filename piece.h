@@ -21,6 +21,7 @@ private:
 public:
 
 	Piece();
+	Piece(const Piece &p);
 	Piece(PieceType type, i32 playerId);
 	~Piece();
 

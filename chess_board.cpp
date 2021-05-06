@@ -13,26 +13,70 @@ ChessBoard::ChessBoard() {
 		isWhite = !isWhite;
 	}
 
-	initBoardState();
+	this->initBoardState();
 }
 ChessBoard::~ChessBoard() {}
 
-const Piece& ChessBoard::GetPieceAt(i32 _row, i32 _col) const {
+Piece& ChessBoard::GetPieceAt(i32 _row, i32 _col) {
 	assert_exp(this->IsInRange(_row, _col));
-	const Piece &ret = field[_row][_col].GetPiece();
+	Piece &ret = field[_row][_col].GetPiece();
 	return ret;
 }
 
-PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) const {
+void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece &p) {
+	assert_exp(this->IsInRange(_row, _col));
+	field[_row][_col].SetPiece(p);
+}
+
+PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) {
 	const Piece &p = this->GetPieceAt(_row, _col);
 	PieceType ret = p.GetType();
 	return ret;
 }
 
-bool ChessBoard::IsInRange(i32 _row, i32 _col) const {
+bool ChessBoard::IsInRange(i32 _row, i32 _col) {
 	bool rowInRange = 0 <= _row && _row < FIELD_SIZE;
 	bool colInRange = 0 <= _col && _col < FIELD_SIZE;
 	return rowInRange && colInRange;
+}
+
+bool ChessBoard::CanAttackSquare(u32 _playerId, i32 _row, i32 _col) {
+	if (this->IsInRange(_row, _col) == false) {
+		return false;
+	}
+	const Piece &currPiece = this->GetPieceAt(_row, _col);
+	bool currPieceIsNone = (currPiece.GetType() == PieceType::None);
+	bool notOurPiece = currPiece.GetPlayerId() != _playerId;
+	return (currPieceIsNone || notOurPiece);
+}
+
+void ChessBoard::PushIfAttackPossible(u32 _pid, i32 _row, i32 _col, std::vector<MovePos> &_av) {
+	bool canAttack = this->CanAttackSquare(_pid, _row, _col);
+	if (canAttack) {
+		MovePos pos = {_row, _col};
+		_av.push_back(pos);
+	}
+}
+
+void ChessBoard::CalcAttackVector(const MovePos &_from, const MovePos &_to, const MovePos &_direction, std::vector<MovePos> &_av) {
+	const Piece &subjectPiece = this->GetPieceAt(_from.Row, _from.Col);
+	assert_exp(subjectPiece.GetType() != PieceType::None);
+
+	u32 playerId = subjectPiece.GetPlayerId();
+	i32 currRow = _from.Row + _direction.Row;
+	i32 currCol = _from.Col + _direction.Col;
+	bool reachedDest = false;
+	bool reachedOccupiedPos = false;
+	while(!reachedDest && !reachedOccupiedPos) {
+		this->PushIfAttackPossible(playerId, currRow, currCol, _av);
+		if (this->IsInRange(currRow, currCol) == false) {
+			break;
+		}
+		reachedOccupiedPos = this->GetPieceTypeAt(currRow, currCol) != PieceType::None;
+		reachedDest = (currRow == _to.Row) && (currCol == _to.Col);
+		currRow += _direction.Row;
+		currCol += _direction.Col;
+	}
 }
 
 void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
@@ -91,9 +135,9 @@ void ChessBoard::initBoardState() {
 	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
 
 	std::string rawField =
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 1R 00\n"
+		"00 00 00 00 00 2Q 00 00\n"
+		"00 00 1B 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 00 1Q 00 1P 00\n"
 		"00 00 00 00 00 00 00 00\n"
@@ -194,5 +238,17 @@ void ChessBoard::Debug_SetColorsForAttack(const std::vector<MovePos> &_av) {
 	for (auto move : _av) {
 		Square* s = &field[move.Row][move.Col];
 		(*s).SetColor(SquareColor::Debug);
+	}
+}
+
+// NOTE: this is buggy, but what ever it is debug code.
+void ChessBoard::Debug_RemoveDebugColorsFromBoard() {
+	for (i32 i = 0; i < FIELD_SIZE; i++) {
+		for (i32 j = 0; j < FIELD_SIZE; j++) {
+			Square* s = &field[i][j];
+			if (s->GetColor() == SquareColor::Debug) {
+				(*s).SetColor(SquareColor::Black);
+			}
+		}
 	}
 }
