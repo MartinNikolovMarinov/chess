@@ -4,7 +4,6 @@
 #include "game_state.h"
 #include "commands.h"
 
-// TODO: implement move vector calcuations.
 // TODO: implement "game is over" logic.
 
 // TODO: all the code should be in a common namespace. (probably)
@@ -44,9 +43,11 @@ int main() {
 			continue;
 		}
 
-		// FIXME: TMP code, This should probably be below the render, but it's here because of the debug ~ render.
 		gm.CalcOpponentAttackVect();
-		if (gm.IsCurrPlayerInCheck()) {
+
+		// FIXME: TMP code, This should probably be below the render, but it's here because of the debug ~ render.
+		gm.chessBoard.Debug_SetColorsForAttack(gm.opponentAttackVect);
+		if (gm.IsCurrPlayerInCheck() == true) {
 			std::cout<<"You are in check"<<std::endl;
 		}
 		// --FIXME: TMP code
@@ -69,11 +70,45 @@ int main() {
 		}
 
 		// FIXME: TMP code
-		Piece fromP = gm.GetFromPiece();
-		cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, fromP);
+
+		// Check move validity
+		std::vector<FieldPos> lMoves;
+		mv.PushPieceLegalMoves(cb, gm.GetFromPiece(), gm.currMovingFrom, lMoves);
+		bool found = false;
+		for (i32 i = 0; i < lMoves.size(); i++) {
+			FieldPos cmv = lMoves[i];
+			if (cmv == gm.currMovingTo) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			gm.errMsg = "Piece can NOT move like that";
+			continue;
+		}
+
+		Piece fromPiece = gm.GetFromPiece();
+		Piece toPieceCopy = Piece(gm.GetToPiece());
+
+		// Make move:
+		cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, fromPiece);
 		cb.SetPieceAt(gm.currMovingFrom.Row, gm.currMovingFrom.Col, EMPTY_PIECE);
+
+		// Recalculate opponent's attack vector after move:
+		gm.CalcOpponentAttackVect();
+
+		// Recalculate check validation after a move was made:
+		if (gm.IsCurrPlayerInCheck() == true) {
+			// Undo move:
+			cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, toPieceCopy);
+			cb.SetPieceAt(gm.currMovingFrom.Row, gm.currMovingFrom.Col, fromPiece);
+			gm.errMsg = "Move is illegal, because you are in CHECK";
+			continue;
+		}
+
 		// --FIXME: TMP code
 
+		// Exact correct place for player rotation (do NOT move):
 		gm.RotatePlayer();
 	}
 }

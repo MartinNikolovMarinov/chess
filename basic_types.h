@@ -19,28 +19,28 @@ typedef double f64;
 struct FieldPos {
     i32 Row, Col;
 
-    FieldPos operator+(FieldPos rhs) {
+    FieldPos operator+(const FieldPos rhs) const {
         FieldPos res = { Row + rhs.Row, Col + rhs.Col };
         return res;
     }
-    FieldPos operator+=(FieldPos rhs) {
+    FieldPos operator+=(const FieldPos rhs) {
         Row += rhs.Row;
         Col += rhs.Col;
         return *this;
     }
-    FieldPos operator-(FieldPos rhs) {
+    FieldPos operator-(const FieldPos rhs) const {
         FieldPos res = { Row - rhs.Row, Col - rhs.Col };
         return res;
     }
-    FieldPos operator-=(FieldPos rhs) {
+    FieldPos operator-=(const FieldPos rhs) {
         Row -= rhs.Row;
         Col -= rhs.Col;
         return *this;
     }
-    bool operator==(FieldPos rhs) {
+    bool operator==(const FieldPos rhs) const {
         return (Row == rhs.Row && Col == rhs.Col);
     }
-    bool operator!=(FieldPos rhs) {
+    bool operator!=(const FieldPos rhs) const {
         return (Row != rhs.Row || Col != rhs.Col);
     }
 };

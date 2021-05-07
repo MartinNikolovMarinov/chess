@@ -18,6 +18,7 @@ public:
 
 	// TODO: write pointless getters and setters for:
 	u32 currPlayer = 1;
+	FieldPos currPLayerKingPos;
 	std::vector<FieldPos> opponentAttackVect;
 	std::string cmdInputLine;
 	std::string errMsg;
@@ -41,6 +42,6 @@ public:
 	bool IsCurrPlayerInCheck();
 };
 
-FieldPos FindKingSquare(const std::vector<Square*> _squares);
+FieldPos FindKingSquare(const std::vector<Square*> squares);
 
 #endif

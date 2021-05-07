@@ -66,12 +66,20 @@ void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 
 	// Draw color indication
 	switch (this->color) {
+		// FIXME: DEBUG:
+		case SquareColor::White:
 		case SquareColor::Black:
-			// _dbuf.SetAt(_top + 1, _left + 1, '*');
+			_dbuf.SetAt(_top + 1, _left + 2, U32DigitToChar(this->piece.GetPlayerId()));
 			break;
 		case SquareColor::Debug:
+			_dbuf.SetAt(_top + 1, _left + 2, U32DigitToChar(this->piece.GetPlayerId()));
 			_dbuf.SetAt(_top + 1, _left + 1, '~');
 			break;
+		// --FIXME: DEBUG:
+
+		// case SquareColor::Black:
+		// 	_dbuf.SetAt(_top + 1, _left + 1, '*');
+		// 	break;
 		default:
 			break;
 	}

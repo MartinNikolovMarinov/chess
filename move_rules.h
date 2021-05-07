@@ -10,6 +10,7 @@ public:
 	~MovementRules();
 
 	void PushPieceLegalAttacks(ChessBoard &chessBoard, Piece &piece, FieldPos &pos, std::vector<FieldPos> &attackVect);
+	void PushPieceLegalMoves(ChessBoard &_cb, Piece &_piece, FieldPos &_pos, std::vector<FieldPos> &_av);
 };
 
 #endif

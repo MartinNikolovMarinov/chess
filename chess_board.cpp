@@ -41,10 +41,24 @@ Square& ChessBoard::GetSquareAt(i32 _row, i32 _col) {
 	return sqr;
 }
 
+bool ChessBoard::IsOwnedByOpponent(u32 playerId, i32 _row, i32 _col) {
+	Piece &p = this->GetPieceAt(_row, _col);
+	bool ret = p.GetPlayerId() != playerId && p.GetPlayerId() != 0;
+	return ret;
+}
+
+bool ChessBoard::IsOwnedByOpponent(u32 playerId, const FieldPos &_pos) {
+	return this->IsOwnedByOpponent(playerId, _pos.Row, _pos.Col);
+}
+
 bool ChessBoard::IsInRange(i32 _row, i32 _col) {
 	bool rowInRange = 0 <= _row && _row < FIELD_SIZE;
 	bool colInRange = 0 <= _col && _col < FIELD_SIZE;
 	return rowInRange && colInRange;
+}
+
+bool ChessBoard::IsInRange(const FieldPos& _pos) {
+	return this->IsInRange(_pos.Row, _pos.Col);
 }
 
 bool ChessBoard::CanAttackSquare(u32 _playerId, i32 _row, i32 _col) {
@@ -70,19 +84,17 @@ void ChessBoard::CalcAttackVector(const FieldPos &_from, const FieldPos &_to, co
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 
 	u32 playerId = subjectPiece.GetPlayerId();
-	i32 currRow = _from.Row + _direction.Row;
-	i32 currCol = _from.Col + _direction.Col;
+	FieldPos currPos = (_from + _direction) ;
 	bool reachedDest = false;
 	bool reachedOccupiedPos = false;
 	while(!reachedDest && !reachedOccupiedPos) {
-		this->PushIfAttackPossible(playerId, currRow, currCol, _av);
-		if (this->IsInRange(currRow, currCol) == false) {
+		this->PushIfAttackPossible(playerId, currPos.Row, currPos.Col, _av);
+		if (this->IsInRange(currPos) == false) {
 			break;
 		}
-		reachedOccupiedPos = this->GetPieceTypeAt(currRow, currCol) != PieceType::None;
-		reachedDest = (currRow == _to.Row) && (currCol == _to.Col);
-		currRow += _direction.Row;
-		currCol += _direction.Col;
+		reachedOccupiedPos = (this->GetPieceTypeAt(currPos.Row, currPos.Col) != PieceType::None);
+		reachedDest = (currPos == _to);
+		currPos += _direction;
 	}
 }
 
@@ -92,7 +104,7 @@ void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	// Draw numbers on top of chess board:
 	for (i32 i = 0; i < FIELD_SIZE; i++) {
 		u32 offRow = _top - 1;
-		u32 offCol = i * SQUARE_WIDTH + _left + (SQUARE_WIDTH / 2);
+		u32 offCol = (i * SQUARE_WIDTH) + _left + (SQUARE_WIDTH / 2);
 		_dbuf.SetAt(offRow, offCol, CanonicalPosToChessLetter(i));
 	}
 
@@ -145,10 +157,10 @@ void ChessBoard::initBoardState() {
 		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 1K 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 2R 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 2K";
 
 	auto splitVect = Debug_StrSplit(rawField, "\n");
@@ -162,6 +174,7 @@ void ChessBoard::initBoardState() {
 			char tChar = pieceStr[1];
 
 			i32 playerId = CharToU32Digit(pChar);
+			assert_exp(0 <= playerId && playerId <= 2);
 			PieceType type = (tChar != '0') ? (PieceType)tChar : PieceType::None;
 
 			Piece p = Piece(type, playerId);

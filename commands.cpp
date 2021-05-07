@@ -36,7 +36,6 @@ i32 PromptPlayerInput(GameState &_gm, FieldPos &_from, FieldPos &_to) {
 		return res;
 	}
 
-	std::cout << std::endl;
 	std::cout << "Type the location you want to move it: ";
 	std::cin >> _gm.cmdInputLine;
 	res = ParseMoveCommand(_gm.cmdInputLine, _to, _gm.errMsg);

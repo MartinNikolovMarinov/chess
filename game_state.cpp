@@ -5,7 +5,6 @@ GameState::~GameState() {}
 void GameState::RotatePlayer() { currPlayer = ((currPlayer == 1) ? 2 : 1); }
 void GameState::Clear() {
 	cmdInputLine.clear();
-	opponentAttackVect.clear();
 }
 
 Piece& GameState::GetFromPiece() {
@@ -62,10 +61,6 @@ void GameState::CalcOpponentAttackVect() {
 		FieldPos pos = sqr->GetPos();
 		movementRules.PushPieceLegalAttacks(chessBoard, p, pos,  opponentAttackVect);
 	}
-
-	// FIXME: TMP code
-	chessBoard.Debug_SetColorsForAttack(opponentAttackVect);
-	// --FIXME: TMP code
 }
 
 bool GameState::IsCurrPlayerInCheck() {
