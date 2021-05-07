@@ -13,6 +13,7 @@ Square::Square(u32 _w, u32 _h, SquareColor _c, const Piece &_p, const FieldPos &
 	pos.Row = _pos.Row;
 	pos.Col = _pos.Col;
 	this->SetPiece(_p);
+	hasOriginalPiece = true;
 }
 Square::~Square() {}
 
@@ -23,6 +24,8 @@ void Square::SetColor(SquareColor _c) { color = _c; }
 void Square::SetPiece(const Piece &_p) { piece = Piece(_p); }
 Piece& Square::GetPiece() { return piece; }
 FieldPos& Square::GetPos() { return pos; }
+void Square::OriginalPieceMoved() { hasOriginalPiece = false; }
+bool Square::HasOriginalPiece() { return hasOriginalPiece; }
 
 void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);
@@ -69,10 +72,10 @@ void Square::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 		// FIXME: DEBUG:
 		case SquareColor::White:
 		case SquareColor::Black:
-			_dbuf.SetAt(_top + 1, _left + 2, U32DigitToChar(this->piece.GetPlayerId()));
+			// _dbuf.SetAt(_top + 1, _left + 2, U32DigitToChar(this->piece.GetPlayerId()));
 			break;
 		case SquareColor::Debug:
-			_dbuf.SetAt(_top + 1, _left + 2, U32DigitToChar(this->piece.GetPlayerId()));
+			// _dbuf.SetAt(_top + 1, _left + 2, U32DigitToChar(this->piece.GetPlayerId()));
 			_dbuf.SetAt(_top + 1, _left + 1, '~');
 			break;
 		// --FIXME: DEBUG:

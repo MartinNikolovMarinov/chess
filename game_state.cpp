@@ -3,22 +3,12 @@
 GameState::GameState(ChessBoard &_cb, MovementRules &_mv) : chessBoard(_cb), movementRules(_mv) {}
 GameState::~GameState() {}
 void GameState::RotatePlayer() { currPlayer = ((currPlayer == 1) ? 2 : 1); }
-void GameState::Clear() {
-	cmdInputLine.clear();
-}
-
-Piece& GameState::GetFromPiece() {
-	Piece& ret = chessBoard.GetPieceAt(currMovingFrom.Row, currMovingFrom.Col);
-	return ret;
-}
-
-Piece& GameState::GetToPiece() {
-	Piece& ret = chessBoard.GetPieceAt(currMovingTo.Row, currMovingTo.Col);
-	return ret;
+void GameState::Init() {
+	opponentAttackVect.clear();
 }
 
 i32 GameState::CheckBasicRules() {
-	Piece fromPiece = GetFromPiece();
+	Piece fromPiece = this->chessBoard.GetPieceAt(currMovingFrom);
 	if (fromPiece.IsEmpty()) {
 		errMsg = "There is not piece at that location.";
 		return -1;
@@ -28,7 +18,7 @@ i32 GameState::CheckBasicRules() {
 		return -1;
 	}
 
-	Piece toPiece = GetToPiece();
+	Piece toPiece = this->chessBoard.GetPieceAt(currMovingTo);
 	if (currPlayer == toPiece.GetPlayerId()) {
 		errMsg = "You can NOT take your own piece.";
 		return -1;
@@ -50,6 +40,7 @@ void GameState::GetPlayerSquares(u32 _pid, std::vector<Square*> &_out) {
 }
 
 void GameState::CalcOpponentAttackVect() {
+	opponentAttackVect.clear();
 	std::vector<Square*> squares;
 	u32 opponentId = currPlayer == 1 ? 2 : 1;
 	this->GetPlayerSquares(opponentId, squares);
@@ -77,6 +68,76 @@ bool GameState::IsCurrPlayerInCheck() {
 	}
 
 	return false;
+}
+
+bool GameState::IsSquareUnderAttack(i32 _row, i32 _col) {
+	bool ret = false;
+	for (i32 i = 0; i < opponentAttackVect.size(); i++) {
+		FieldPos curr = opponentAttackVect[i];
+		if (curr.Row == _row && curr.Col == _col) {
+			ret = true;
+			break;
+		}
+	}
+	return ret;
+}
+
+bool GameState::IsSquareUnderAttack(const FieldPos &p) {
+	return this->IsSquareUnderAttack(p.Row, p.Col);
+}
+
+bool GameState::IsLegalCastlePos(const FieldPos &_pos, u32 _playerId) {
+	bool ret = false;
+	if (_playerId == 1) {
+		bool kingIsAtOriginSpot = (this->chessBoard.GetSquareAt(7, 4).HasOriginalPiece() &&
+									this->chessBoard.GetPieceTypeAt(7, 4) == PieceType::King);
+		if (kingIsAtOriginSpot) {
+			bool pathToKingLeft = (this->chessBoard.GetPieceTypeAt(7, 1) == PieceType::None &&
+									this->chessBoard.GetPieceTypeAt(7, 2) == PieceType::None &&
+									this->chessBoard.GetPieceTypeAt(7, 3) == PieceType::None);
+			bool leftIsNOTAttaceked = (!this->IsSquareUnderAttack(7, 1) &&
+										!this->IsSquareUnderAttack(7, 2) &&
+										!this->IsSquareUnderAttack(7, 3));
+			bool leftRookIsAtOriginSpot = (this->chessBoard.GetSquareAt(7, 0).HasOriginalPiece() &&
+											this->chessBoard.GetPieceTypeAt(7, 0) == PieceType::Rook);
+			bool leftCastle = (_pos == BOTTOM_LEFT_CASTLE_POS && leftRookIsAtOriginSpot && leftIsNOTAttaceked);
+
+			bool pathToKingRight = (this->chessBoard.GetPieceTypeAt(7, 6) == PieceType::None &&
+									this->chessBoard.GetPieceTypeAt(7, 5) == PieceType::None);
+			bool rightIsNOTAttaceked = (!this->IsSquareUnderAttack(7, 6) &&
+										!this->IsSquareUnderAttack(7, 5));
+			bool rightRookIsAtOriginSpot = (this->chessBoard.GetSquareAt(7, 7).HasOriginalPiece() &&
+											this->chessBoard.GetPieceTypeAt(7, 7) == PieceType::Rook);
+			bool rightCastle = (_pos == BOTTOM_RIGHT_CASTLE_POS && rightRookIsAtOriginSpot && rightIsNOTAttaceked);
+
+			ret = ((leftCastle && pathToKingLeft) || (rightCastle && pathToKingRight));
+		}
+	} else if (_playerId == 2) {
+		bool kingIsAtOriginSpot = (this->chessBoard.GetSquareAt(0, 4).HasOriginalPiece() &&
+									this->chessBoard.GetPieceTypeAt(0, 4) == PieceType::King);
+		if (kingIsAtOriginSpot) {
+			bool pathToKingLeft = (this->chessBoard.GetPieceTypeAt(0, 1) == PieceType::None &&
+									this->chessBoard.GetPieceTypeAt(0, 2) == PieceType::None &&
+									this->chessBoard.GetPieceTypeAt(0, 3) == PieceType::None);
+			bool leftIsNOTAttaceked = (!this->IsSquareUnderAttack(0, 1) &&
+										!this->IsSquareUnderAttack(0, 2) &&
+										!this->IsSquareUnderAttack(0, 3));
+			bool leftRookIsAtOriginSpot = (this->chessBoard.GetSquareAt(0, 0).HasOriginalPiece() &&
+											this->chessBoard.GetPieceTypeAt(0, 0) == PieceType::Rook);
+			bool leftCastle = (_pos == TOP_LEFT_CASTLE_POS && leftRookIsAtOriginSpot && leftIsNOTAttaceked);
+
+			bool pathToKingRight = (this->chessBoard.GetPieceTypeAt(0, 6) == PieceType::None &&
+									this->chessBoard.GetPieceTypeAt(0, 5) == PieceType::None);
+			bool rightIsNOTAttaceked = (!this->IsSquareUnderAttack(0, 6) &&
+										!this->IsSquareUnderAttack(0, 5));
+			bool rightRookIsAtOriginSpot = (this->chessBoard.GetSquareAt(0, 7).HasOriginalPiece() &&
+											this->chessBoard.GetPieceTypeAt(0, 7) == PieceType::Rook);
+			bool rightCastle = (_pos == TOP_RIGHT_CASTLE_POS && rightRookIsAtOriginSpot && rightIsNOTAttaceked);
+
+			ret = ((leftCastle && pathToKingLeft) || (rightCastle && pathToKingRight));
+		}
+	}
+	return ret;
 }
 
 FieldPos FindKingSquare(const std::vector<Square*> _squares) {

@@ -16,7 +16,7 @@ private:
 	u32 width, height;
 	SquareColor color;
 	Piece piece;
-	bool enPassant;
+	bool enPassant, hasOriginalPiece;
 	FieldPos pos;
 public:
 	Square();
@@ -27,10 +27,14 @@ public:
 	void SetPiece(const Piece &piece);
 	bool GetEnPassant();
 	void SetEnPassant(bool value);
+
 	SquareColor GetColor();
 	void SetColor(SquareColor color);
 	Piece& GetPiece();
 	FieldPos& GetPos();
+
+	void OriginalPieceMoved();
+	bool HasOriginalPiece();
 };
 
 #endif

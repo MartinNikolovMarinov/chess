@@ -24,9 +24,17 @@ Piece& ChessBoard::GetPieceAt(i32 _row, i32 _col) {
 	return ret;
 }
 
+Piece& ChessBoard::GetPieceAt(const FieldPos& _pos) {
+	return this->GetPieceAt(_pos.Row, _pos.Col);
+}
+
 void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece &_p) {
 	assert_exp(this->IsInRange(_row, _col));
 	field[_row][_col].SetPiece(_p);
+}
+
+void ChessBoard::SetPieceAt(const FieldPos& _pos, const Piece &_p) {
+	return this->SetPieceAt(_pos.Row, _pos.Col, _p);
 }
 
 PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) {
@@ -42,6 +50,10 @@ Square& ChessBoard::GetSquareAt(i32 _row, i32 _col) {
 }
 
 bool ChessBoard::IsOwnedByOpponent(u32 playerId, i32 _row, i32 _col) {
+	if (!this->IsInRange(_row, _col)) {
+		// invalid coords are not an error for this function!
+		return false;
+	}
 	Piece &p = this->GetPieceAt(_row, _col);
 	bool ret = p.GetPlayerId() != playerId && p.GetPlayerId() != 0;
 	return ret;
@@ -98,6 +110,13 @@ void ChessBoard::CalcAttackVector(const FieldPos &_from, const FieldPos &_to, co
 	}
 }
 
+void ChessBoard::SwapPieces(const FieldPos _first, const FieldPos _second) {
+	Piece f = this->GetPieceAt(_first);
+	Piece s = this->GetPieceAt(_second);
+	this->SetPieceAt(_second, f);
+	this->SetPieceAt(_first, s);
+}
+
 void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);
 
@@ -143,6 +162,15 @@ void ChessBoard::initBoardState() {
 		This slow/bad code is here for debugging convenience, until the final algorithm is done!
 	*/
 
+	std::string rawField =
+		"00 00 00 00 2K 00 00 00\n"
+		"00 00 00 00 00 00 00 2P\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"1P 00 00 00 00 00 00 00\n"
+		"00 00 00 00 1K 00 00 00";
 	// std::string rawField =
 	// 	"2R 2N 2B 2Q 2K 2B 2N 2R\n"
 	// 	"2P 2P 2P 2P 2P 2P 2P 2P\n"
@@ -152,16 +180,6 @@ void ChessBoard::initBoardState() {
 	// 	"00 00 00 00 00 00 00 00\n"
 	// 	"1P 1P 1P 1P 1P 1P 1P 1P\n"
 	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
-
-	std::string rawField =
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 1K 00 00 00 00\n"
-		"00 00 00 2R 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 2K";
 
 	auto splitVect = Debug_StrSplit(rawField, "\n");
 	for (i32 row = 0; row < splitVect.size(); row++) {

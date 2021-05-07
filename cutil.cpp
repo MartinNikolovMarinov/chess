@@ -3,9 +3,7 @@
 // n must be a number between 0 and 9
 char U32DigitToChar(u32 _n) {
 	if (_n > 9) {
-		std::ostringstream msg;
-		msg << "invalid value of argument n=" << _n << std::endl;
-		throw std::invalid_argument(msg.str());
+		assert_exp(!"invalid value of argument");
 	}
 	return (char)_n + 48;
 }
@@ -13,9 +11,7 @@ char U32DigitToChar(u32 _n) {
 // n must be a number between 0 and 9
 u32 CharToU32Digit(char _c) {
 	if ('0' > _c || _c > '9') {
-		std::ostringstream msg;
-		msg << "invalid value of argument c=" << _c << std::endl;
-		throw std::invalid_argument(msg.str());
+		assert_exp(!"invalid value of argument");
 	}
 	return (u32)(_c - 48);
 }
@@ -39,11 +35,9 @@ u32 ChessDigitToCanonicalPos(char _c) {
 		case '3': return 5;
 		case '2': return 6;
 		case '1': return 7;
-		default:
-			std::ostringstream msg;
-			msg << "invalid value of argument c=" << _c << std::endl;
-			throw std::invalid_argument(msg.str());
 	}
+	assert_exp(!"invalid value of argument")
+	return 0;
 }
 
 u32 ChessLetterToCanonicalPos(char _c) {
@@ -56,11 +50,9 @@ u32 ChessLetterToCanonicalPos(char _c) {
 		case 'F': return 5;
 		case 'G': return 6;
 		case 'H': return 7;
-		default:
-			std::ostringstream msg;
-			msg << "invalid value of argument c=" << _c << std::endl;
-			throw std::invalid_argument(msg.str());
 	}
+	assert_exp(!"invalid value of argument")
+	return 0;
 }
 
 char CanonicalPosToChessLetter(u32 _n) {
@@ -73,11 +65,9 @@ char CanonicalPosToChessLetter(u32 _n) {
 		case 5: return 'F';
 		case 6: return 'G';
 		case 7: return 'H';
-		default:
-			std::ostringstream msg;
-			msg << "invalid value of argument n=" << _n << std::endl;
-			throw std::invalid_argument(msg.str());
 	}
+	assert_exp(!"invalid value of argument")
+	return 0;
 }
 
 std::vector<std::string> Debug_StrSplit(const std::string &_s, const std::string &_delim) {

@@ -5,6 +5,7 @@ void pushBishopAttacks(ChessBoard &chessBoard, FieldPos &from, std::vector<Field
 void pushQueenAttacks(ChessBoard &chessBoard, FieldPos &from, std::vector<FieldPos> &attackVect);
 void pushKnightAttacks(ChessBoard &chessBoard, FieldPos &from, std::vector<FieldPos> &attackVect);
 void pushKingAttacks(ChessBoard &chessBoard, FieldPos &from, std::vector<FieldPos> &attackVect);
+void pushKingMoves(ChessBoard &chessBoard, FieldPos &from, std::vector<FieldPos> &attackVect);
 void pushPawnkAttacks(ChessBoard &chessBoard, FieldPos &from, std::vector<FieldPos> &attackVect);
 void pushPawnMoves(ChessBoard &chessBoard, FieldPos &from, std::vector<FieldPos> &attackVect);
 
@@ -41,14 +42,15 @@ void MovementRules::PushPieceLegalAttacks(ChessBoard &_cb, Piece &_piece, FieldP
 void MovementRules::PushPieceLegalMoves(ChessBoard &_cb, Piece &_piece, FieldPos &_pos, std::vector<FieldPos> &_av) {
 	switch (_piece.GetType()) {
 		case PieceType::Pawn:
-			// IMPORTANT: only pawns can't move where they attack.
 			pushPawnMoves(_cb, _pos, _av);
 			break;
-		case PieceType::Rook:
+		case PieceType::King:
+			pushKingMoves(_cb, _pos, _av);
+			break;
 		case PieceType::Knight:
+		case PieceType::Rook:
 		case PieceType::Bishop:
 		case PieceType::Queen:
-		case PieceType::King:
 		case PieceType::None:
 			this->PushPieceLegalAttacks(_cb, _piece, _pos, _av);
 			break;
@@ -117,6 +119,10 @@ void pushKingAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_a
 	_cb.PushIfAttackPossible(playerId, _from.Row + DOWN_RIGHT_DIRECTION.Row, _from.Col + DOWN_RIGHT_DIRECTION.Col, _av);
 }
 
+void pushKingMoves(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
+	pushKingAttacks(_cb, _from, _av);
+}
+
 void pushPawnkAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
 	bool canAttack;
 	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
@@ -139,6 +145,10 @@ void pushPawnMoves(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av)
 	u32 playerId = subjectPiece.GetPlayerId();
 
 	if (playerId == 1) {
+		if (_from.Row == 6) {
+			// Allow 2 square moves if the pawn is on its starting position.
+			_cb.PushIfAttackPossible(playerId, (_from.Row + UP_DIRECTION.Row) - 1, _from.Col + UP_DIRECTION.Col, _av);
+		}
 		_cb.PushIfAttackPossible(playerId, _from.Row + UP_DIRECTION.Row, _from.Col + UP_DIRECTION.Col, _av);
 		if (_cb.IsOwnedByOpponent(playerId, _from + UP_LEFT_DIRECTION)) {
 			_cb.PushIfAttackPossible(playerId, _from.Row + UP_LEFT_DIRECTION.Row, _from.Col + UP_LEFT_DIRECTION.Col, _av);
@@ -147,6 +157,10 @@ void pushPawnMoves(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av)
 			_cb.PushIfAttackPossible(playerId, _from.Row + UP_RIGHT_DIRECTION.Row, _from.Col + UP_RIGHT_DIRECTION.Col, _av);
 		}
 	} else {
+		if (_from.Row == 1) {
+			// Allow 2 square moves if the pawn is on its starting position.
+			_cb.PushIfAttackPossible(playerId, (_from.Row + DOWN_DIRECTION.Row) + 1, _from.Col + UP_DIRECTION.Col, _av);
+		}
 		_cb.PushIfAttackPossible(playerId, _from.Row + DOWN_DIRECTION.Row, _from.Col + DOWN_DIRECTION.Col, _av);
 		if (_cb.IsOwnedByOpponent(playerId, _from + DOWN_LEFT_DIRECTION)) {
 			_cb.PushIfAttackPossible(playerId, _from.Row + DOWN_LEFT_DIRECTION.Row, _from.Col + DOWN_LEFT_DIRECTION.Col, _av);

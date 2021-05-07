@@ -55,4 +55,9 @@ static const FieldPos DOWN_LEFT_DIRECTION = {1, -1};
 static const FieldPos UP_RIGHT_DIRECTION = {-1, 1};
 static const FieldPos DOWN_RIGHT_DIRECTION = {1, 1};
 
+static const FieldPos BOTTOM_LEFT_CASTLE_POS = {7, 2};
+static const FieldPos BOTTOM_RIGHT_CASTLE_POS = {7, 6};
+static const FieldPos TOP_LEFT_CASTLE_POS = {0, 2};
+static const FieldPos TOP_RIGHT_CASTLE_POS = {0, 6};
+
 #endif

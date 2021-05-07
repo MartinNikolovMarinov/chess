@@ -16,14 +16,13 @@ public:
 	ChessBoard &chessBoard;
 	MovementRules &movementRules;
 
-	// TODO: write pointless getters and setters for:
 	u32 currPlayer = 1;
-	FieldPos currPLayerKingPos;
 	std::vector<FieldPos> opponentAttackVect;
-	std::string cmdInputLine;
 	std::string errMsg;
 
+	// Special game states:
 	bool isGameOver = false;
+
 	FieldPos currMovingFrom;
 	FieldPos currMovingTo;
 
@@ -32,14 +31,15 @@ public:
 	~GameState();
 
 	void RotatePlayer();
-	Piece& GetFromPiece();
-	Piece& GetToPiece();
-	void Clear();
 	i32 CheckBasicRules();
+	void Init();
 
 	void GetPlayerSquares(u32 playerId, std::vector<Square*> &out);
 	void CalcOpponentAttackVect();
 	bool IsCurrPlayerInCheck();
+	bool IsLegalCastlePos(const FieldPos &pos, u32 playerId);
+	bool IsSquareUnderAttack(i32 row, i32 col);
+	bool IsSquareUnderAttack(const FieldPos &p);
 };
 
 FieldPos FindKingSquare(const std::vector<Square*> squares);
