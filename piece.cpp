@@ -2,9 +2,10 @@
 
 Piece::Piece() : type(PieceType::None), playerId(0) {}
 Piece::Piece(PieceType _t, i32 _pid) : type(_t), playerId(_pid) {}
-Piece::Piece(const Piece &p) {
-    this->type = p.type;
-    this->playerId = p.playerId;
+Piece::Piece(const Piece *_p) {
+    assert_exp(_p != nullptr);
+    this->type = _p->type;
+    this->playerId = _p->playerId;
 }
 Piece::~Piece() {}
 

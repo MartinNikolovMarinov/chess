@@ -7,7 +7,7 @@ ChessBoard::ChessBoard() {
 		for (i32 col = 0; col < FIELD_SIZE; col++) {
 			SquareColor color = isWhite ? SquareColor::White : SquareColor::Black;
 			FieldPos pos = {row, col};
-			field[row][col] = Square(SQUARE_WIDTH, SQUARE_HEIGHT, color, emptyPiece, pos);
+			field[row][col] = Square(SQUARE_WIDTH, SQUARE_HEIGHT, color, &emptyPiece, pos);
 			isWhite = !isWhite;
 		}
 
@@ -18,49 +18,48 @@ ChessBoard::ChessBoard() {
 }
 ChessBoard::~ChessBoard() {}
 
-Piece& ChessBoard::GetPieceAt(i32 _row, i32 _col) {
+Piece ChessBoard::GetPieceAt(i32 _row, i32 _col) {
 	assert_exp(this->IsInRange(_row, _col));
-	Piece &ret = field[_row][_col].GetPiece();
+	Piece ret = field[_row][_col].GetPiece();
 	return ret;
 }
-
-Piece& ChessBoard::GetPieceAt(const FieldPos& _pos) {
+Piece ChessBoard::GetPieceAt(FieldPos _pos) {
 	return this->GetPieceAt(_pos.Row, _pos.Col);
 }
-
-void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece &_p) {
+void ChessBoard::SetPieceAt(i32 _row, i32 _col, const Piece *_p) {
 	assert_exp(this->IsInRange(_row, _col));
 	field[_row][_col].SetPiece(_p);
 }
-
-void ChessBoard::SetPieceAt(const FieldPos& _pos, const Piece &_p) {
+void ChessBoard::SetPieceAt(FieldPos _pos, const Piece *_p) {
 	return this->SetPieceAt(_pos.Row, _pos.Col, _p);
 }
-
 PieceType ChessBoard::GetPieceTypeAt(i32 _row, i32 _col) {
-	Piece &p = this->GetPieceAt(_row, _col);
+	Piece p = this->GetPieceAt(_row, _col);
 	PieceType ret = p.GetType();
 	return ret;
 }
-
-Square& ChessBoard::GetSquareAt(i32 _row, i32 _col) {
+PieceType ChessBoard::GetPieceTypeAt(FieldPos _pos) {
+	return this->GetPieceTypeAt(_pos.Row, _pos.Col);
+}
+Square* ChessBoard::GetSquareAt(i32 _row, i32 _col) {
 	assert_exp(this->IsInRange(_row, _col));
-	Square& sqr= field[_row][_col];
+	Square *sqr= &field[_row][_col];
 	return sqr;
 }
-
-bool ChessBoard::IsOwnedByOpponent(u32 playerId, i32 _row, i32 _col) {
-	if (!this->IsInRange(_row, _col)) {
-		// invalid coords are not an error for this function!
-		return false;
-	}
-	Piece &p = this->GetPieceAt(_row, _col);
-	bool ret = p.GetPlayerId() != playerId && p.GetPlayerId() != 0;
-	return ret;
+Square* ChessBoard::GetSquareAt(FieldPos _pos) {
+	return this->GetSquareAt(_pos.Row, _pos.Col);
 }
 
-bool ChessBoard::IsOwnedByOpponent(u32 playerId, const FieldPos &_pos) {
-	return this->IsOwnedByOpponent(playerId, _pos.Row, _pos.Col);
+void ChessBoard::GetPlayerSquares(u32 _pid, std::vector<Square*> &_out) {
+	for (i32 row = 0; row < FIELD_SIZE; row++) {
+		for (i32 col = 0; col < FIELD_SIZE; col++) {
+			Square *sqr= &field[row][col];
+			Piece p = sqr->GetPiece();
+			if (p.GetPlayerId() == _pid) {
+				_out.push_back(sqr);
+			}
+		}
+	}
 }
 
 bool ChessBoard::IsInRange(i32 _row, i32 _col) {
@@ -68,31 +67,49 @@ bool ChessBoard::IsInRange(i32 _row, i32 _col) {
 	bool colInRange = 0 <= _col && _col < FIELD_SIZE;
 	return rowInRange && colInRange;
 }
-
-bool ChessBoard::IsInRange(const FieldPos& _pos) {
+bool ChessBoard::IsInRange(FieldPos _pos) {
 	return this->IsInRange(_pos.Row, _pos.Col);
 }
+bool ChessBoard::IsOwnedByOpponent(u32 playerId, i32 _row, i32 _col) {
+	if (!this->IsInRange(_row, _col)) {
+		// invalid coords are not an error for this function!
+		return false;
+	}
+	Piece p = this->GetPieceAt(_row, _col);
+	bool ret = p.GetPlayerId() != playerId && p.GetPlayerId() != 0;
+	return ret;
+}
+bool ChessBoard::IsOwnedByOpponent(u32 playerId, FieldPos _pos) {
+	return this->IsOwnedByOpponent(playerId, _pos.Row, _pos.Col);
+}
 
-bool ChessBoard::CanAttackSquare(u32 _playerId, i32 _row, i32 _col) {
+bool ChessBoard::canAttackSquare(u32 _playerId, i32 _row, i32 _col) {
 	if (this->IsInRange(_row, _col) == false) {
 		return false;
 	}
-	Piece &currPiece = this->GetPieceAt(_row, _col);
+	Piece currPiece = this->GetPieceAt(_row, _col);
 	bool currPieceIsNone = (currPiece.GetType() == PieceType::None);
 	bool notOurPiece = currPiece.GetPlayerId() != _playerId;
 	return (currPieceIsNone || notOurPiece);
 }
 
+void ChessBoard::SwapPieces(FieldPos _first, FieldPos _second) {
+	Piece f = this->GetPieceAt(_first);
+	Piece s = this->GetPieceAt(_second);
+	this->SetPieceAt(_second, &f);
+	this->SetPieceAt(_first, &s);
+}
+
 void ChessBoard::PushIfAttackPossible(u32 _pid, i32 _row, i32 _col, std::vector<FieldPos> &_av) {
-	bool canAttack = this->CanAttackSquare(_pid, _row, _col);
+	bool canAttack = this->canAttackSquare(_pid, _row, _col);
 	if (canAttack) {
 		FieldPos pos = {_row, _col};
 		_av.push_back(pos);
 	}
 }
 
-void ChessBoard::CalcAttackVector(const FieldPos &_from, const FieldPos &_to, const FieldPos &_direction, std::vector<FieldPos> &_av) {
-	Piece &subjectPiece = this->GetPieceAt(_from.Row, _from.Col);
+void ChessBoard::CalcAttackVector(FieldPos _from, FieldPos _to, FieldPos _direction, std::vector<FieldPos> &_av) {
+	Piece subjectPiece = this->GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 
 	u32 playerId = subjectPiece.GetPlayerId();
@@ -110,21 +127,14 @@ void ChessBoard::CalcAttackVector(const FieldPos &_from, const FieldPos &_to, co
 	}
 }
 
-void ChessBoard::SwapPieces(const FieldPos _first, const FieldPos _second) {
-	Piece f = this->GetPieceAt(_first);
-	Piece s = this->GetPieceAt(_second);
-	this->SetPieceAt(_second, f);
-	this->SetPieceAt(_first, s);
-}
-
-void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
+void ChessBoard::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
 	Displayer::Display(_dbuf, _top, _left);
 
 	// Draw numbers on top of chess board:
 	for (i32 i = 0; i < FIELD_SIZE; i++) {
 		u32 offRow = _top - 1;
 		u32 offCol = (i * SQUARE_WIDTH) + _left + (SQUARE_WIDTH / 2);
-		_dbuf.SetAt(offRow, offCol, CanonicalPosToChessLetter(i));
+		_dbuf->SetAt(offRow, offCol, CanonicalPosToChessLetter(i));
 	}
 
 	// Draw chess board:
@@ -151,7 +161,7 @@ void ChessBoard::Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
 	for (i32 i = 0; i < FIELD_SIZE; i++) {
 		u32 offRow = (i * SQUARE_HEIGHT) + (_top - offsetForNPlusOne) + (SQUARE_HEIGHT / 2);
 		u32 offCol = _left - 2;
-		_dbuf.SetAt(offRow, offCol, U32DigitToChar(FIELD_SIZE - i));
+		_dbuf->SetAt(offRow, offCol, U32DigitToChar(FIELD_SIZE - i));
 		offsetForNPlusOne++;
 	}
 }
@@ -163,23 +173,14 @@ void ChessBoard::initBoardState() {
 	*/
 
 	std::string rawField =
-		"00 00 00 00 2K 00 00 00\n"
-		"00 00 00 00 00 00 00 2P\n"
+		"2R 2N 2B 2Q 2K 2B 2N 2R\n"
+		"2P 2P 2P 2P 2P 2P 2P 2P\n"
 		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
-		"1P 00 00 00 00 00 00 00\n"
-		"00 00 00 00 1K 00 00 00";
-	// std::string rawField =
-	// 	"2R 2N 2B 2Q 2K 2B 2N 2R\n"
-	// 	"2P 2P 2P 2P 2P 2P 2P 2P\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"1P 1P 1P 1P 1P 1P 1P 1P\n"
-	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
+		"1P 1P 1P 1P 1P 1P 1P 1P\n"
+		"1R 1N 1B 1Q 1K 1B 1N 1R";
 
 	auto splitVect = Debug_StrSplit(rawField, "\n");
 	for (i32 row = 0; row < splitVect.size(); row++) {
@@ -196,7 +197,7 @@ void ChessBoard::initBoardState() {
 			PieceType type = (tChar != '0') ? (PieceType)tChar : PieceType::None;
 
 			Piece p = Piece(type, playerId);
-			field[row][col].SetPiece(p);
+			field[row][col].SetPiece(&p);
 		}
 	}
 #else
@@ -270,23 +271,4 @@ void ChessBoard::initBoardState() {
 	p = Piece(PieceType::Pawn, 2);
 	field[1][7].SetPiece(&p);
 #endif
-}
-
-void ChessBoard::Debug_SetColorsForAttack(const std::vector<FieldPos> &_av) {
-	for (auto move : _av) {
-		Square* s = &field[move.Row][move.Col];
-		(*s).SetColor(SquareColor::Debug);
-	}
-}
-
-// NOTE: this is buggy, but what ever it is debug code.
-void ChessBoard::Debug_RemoveDebugColorsFromBoard() {
-	for (i32 i = 0; i < FIELD_SIZE; i++) {
-		for (i32 j = 0; j < FIELD_SIZE; j++) {
-			Square* s = &field[i][j];
-			if (s->GetColor() == SquareColor::Debug) {
-				(*s).SetColor(SquareColor::Black);
-			}
-		}
-	}
 }

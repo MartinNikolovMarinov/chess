@@ -15,24 +15,73 @@ int main() {
 	DisplayBuffer dbuf = DisplayBuffer(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	ChessBoard cb;
 	MovementRules mv;
-	GameState gm = GameState(cb, mv);
+	GameState gm = GameState(&cb, &mv);
 	TextDisplay mfu = TextDisplay();
 
 	// FIXME: TMP code
 	// #include <sstream>
 	std::stringstream debugIn(
-		"2A 4A\n"
+		"2E 4E\n"
+		"7E 5E\n"
+		"1G 3F\n"
+		"8B 6C\n"
+		"1F 5B\n"
+		"8G 6F\n"
+		"1E 1G\n"
+		"6F 4E\n"
+		"1F 1E\n"
+		"4E 6D\n"
+		"3F 5E\n"
+		"8F 7E\n"
+		"5B 1F\n"
+		"6C 5E\n"
+		"1E 5E\n"
+		"8E 8G\n"
+		"2D 4D\n"
+		"7E 6F\n"
+		"5E 1E\n"
+		"8F 8E\n"
+		"2C 3C\n"
+		"8E 1E\n"
+		"1D 1E\n"
+		"6D 8E\n"
+		"1C 4F\n"
+		"7D 5D\n"
+		"1F 3D\n"
+		"7G 6G\n"
+		"1B 2D\n"
+		"8E 7G\n"
+		"2D 3F\n"
+		"8C 5F\n"
+		"3D 5F\n"
+		"7G 5F\n"
+		"1E 2E\n"
+		"7C 6C\n"
+		"1A 1E\n"
+		"5F 7G\n"
+		"4F 5E\n"
+		"6F 5E\n"
+		"3F 5E\n"
+		"8D 6D\n"
+		"5E 3D\n"
+		"8A 8E\n"
+		"2E 2D\n"
+		"8E 1E\n"
+		"2D 1E\n"
+		"7G 6E\n"
+		"1E 3E\n"
+		"7F 6F\n"
+		"2H 4H\n"
 		"7H 5H\n"
-		"4A 5A\n"
-		"5H 4H\n"
-		"5A 6A\n"
-		"4H 3H\n"
-		"6A 7A\n"
-		"3H 2H\n"
-		"7A 8A\n"
-		"8E 7E\n"
-		"8A 2A\n"
-		"2H 1H\n"
+		"3E 6H\n"
+		"8G 7F\n"
+		"6H 3E\n"
+		"7F 8G\n"
+		"3E 6H\n"
+		"8G 7F\n"
+		"6H 3E\n"
+		"7F 8G\n"
+		"3E 6H\n"
 	);
 	// gm.RotatePlayer();
 	i32 count = 0;
@@ -49,15 +98,11 @@ int main() {
 		mfu.Clear();
 		gm.Init();
 
-		// FIXME: TMP code
-		cb.Debug_RemoveDebugColorsFromBoard();
-		// --FIXME: TMP code
-
 		if (gm.errMsg.length() > 0) {
 			// Prev input from user had errors.
 			gm.errMsg += "\nPress enter to continue.";
 			mfu.SetMsg(gm.errMsg);
-			mfu.Display(dbuf, 15, 30);
+			mfu.Display(&dbuf, 15, 30);
 			dbuf.FlushTo(std::cout);
 			gm.errMsg.clear();
 
@@ -67,18 +112,13 @@ int main() {
 		}
 
 		// Validate Checkmate state:
-		gm.CalcOpponentAttackVect();
 		if (gm.IsCurrPlayerInCheck() == true) {
-			std::cout<<"You are in check"<<std::endl;
-			// TODO: add end game check condition here.
+			gm.isInCheck = true;
+
 		}
 
-		// FIXME: TMP code, This should probably be below the render, but it's here because of the debug ~ render.
-		gm.chessBoard.Debug_SetColorsForAttack(gm.opponentAttackVect);
-		// --FIXME: TMP code
-
 		// Render to screen:
-		cb.Display(dbuf, 2, DISPLAY_CHESS_CENTER_LEFT);
+		cb.Display(&dbuf, 2, DISPLAY_CHESS_CENTER_LEFT);
 		dbuf.FlushTo(std::cout);
 
 		// Prompt the player for input. This blocks the thread
@@ -89,22 +129,6 @@ int main() {
 		// FIXME: TMP code
 		MoveCmd cmd = MoveCmd(std::cout, debugIn);
 		// FIXME: --TMP code
-#else
-		MoveCmd cmd = MoveCmd(std::cout, std::cin);
-#endif
-
-		if (cmd.PromptPlayerInput(gm.currPlayer, gm.currMovingFrom, gm.currMovingTo, gm.errMsg) < 0) {
-			continue;
-		}
-
-		// Check move validity:
-		if (gm.CheckBasicRules() < 0) {
-			continue;
-		}
-
-		if (gm.IsCurrPlayerInCheck() == true) {
-			// TODO: forbit castling here
-		}
 
 		// FIXME: TMP code
 		// if (cmd.GetUserInput() == "2D 1E") {
@@ -114,82 +138,28 @@ int main() {
 		// 	dbuf.FlushTo(std::cout);
 		// }
 		// std::cout << cmd.GetUserInput() << " count=" << count++;
-
-		Square& fromSquare = gm.chessBoard.GetSquareAt(gm.currMovingFrom.Row, gm.currMovingFrom.Col);
-		Square& toSquare = gm.chessBoard.GetSquareAt(gm.currMovingTo.Row, gm.currMovingTo.Col);
-		Piece fromPiece = fromSquare.GetPiece();
-		Piece toPiece = toSquare.GetPiece();
-
-		// Check move validity
-		std::vector<FieldPos> lMoves;
-		mv.PushPieceLegalMoves(cb, fromPiece, gm.currMovingFrom, lMoves);
-		bool found = false;
-		for (i32 i = 0; i < lMoves.size(); i++) {
-			FieldPos cmv = lMoves[i];
-			if (cmv == gm.currMovingTo) {
-				found = true;
-				break;
-			}
-		}
-
-		// Castle logic:
-		bool isCastleMove = gm.IsLegalCastlePos(toSquare.GetPos(), fromPiece.GetPlayerId());
-		if (fromPiece.GetType() == PieceType::King && isCastleMove) {
-			// Player is making a castle move. We need to move the rook to the special castle place:
-			if (toSquare.GetPos() == BOTTOM_LEFT_CASTLE_POS) {
-				cb.SwapPieces(FieldPos{7,0}, FieldPos{7, 3});
-			}
-			else if (toSquare.GetPos() == BOTTOM_RIGHT_CASTLE_POS) {
-				cb.SwapPieces(FieldPos{7,7}, FieldPos{7, 5});
-			}
-			else if (toSquare.GetPos() == TOP_LEFT_CASTLE_POS) {
-				cb.SwapPieces(FieldPos{0,0}, FieldPos{0, 3});
-			}
-			else if (toSquare.GetPos() == TOP_RIGHT_CASTLE_POS) {
-				cb.SwapPieces(FieldPos{0,7}, FieldPos{0, 5});
-			}
-			else {
-				assert_exp(!"Castle logic failed");
-			}
-			found = true;
-		}
-
-		if (!found) {
-			gm.errMsg = "Piece can NOT move like that";
-			continue;
-		}
-
-		// Make move:
-		cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, fromPiece);
-		cb.SetPieceAt(gm.currMovingFrom.Row, gm.currMovingFrom.Col, EMPTY_PIECE);
-
-		// Recalculate opponent's attack vector after move:
-		gm.CalcOpponentAttackVect();
-
-		// Recalculate check validation after a move was made:
-		if (gm.IsCurrPlayerInCheck() == true) {
-			// Undo move:
-			cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, toPiece);
-			cb.SetPieceAt(gm.currMovingFrom.Row, gm.currMovingFrom.Col, fromPiece);
-			gm.errMsg = "Move is illegal, because you are in CHECK";
-			continue;
-		}
-
-		// Check if move is pawn promotion:
-		if (fromPiece.GetType() == PieceType::Pawn && gm.currPlayer == 1 && gm.currMovingTo.Row == 0) {
-			cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, Piece(PieceType::Queen, gm.currPlayer));
-		}
-		if (fromPiece.GetType() == PieceType::Pawn && gm.currPlayer == 2 && gm.currMovingTo.Row == 7) {
-			cb.SetPieceAt(gm.currMovingTo.Row, gm.currMovingTo.Col, Piece(PieceType::Queen, gm.currPlayer));
-		}
-
-		// After all validation, mark squares as no longer holding theier original pieces.
-		fromSquare.OriginalPieceMoved();
-		toSquare.OriginalPieceMoved();
-
 		// --FIXME: TMP code
+#else
+		MoveCmd cmd = MoveCmd(std::cout, std::cin);
+#endif
 
-		// Exact correct place for player rotation (do NOT move):
+		if (cmd.PromptPlayerInput(gm.GetCurrPlayer(), gm.currMovingFrom, gm.currMovingTo, gm.errMsg) < 0) {
+			continue;
+		}
+
+		// Check move validity:
+		if (gm.CheckBasicRules() == false) {
+			continue;
+		}
+		if (gm.IsCurrMoveLegal() == false) {
+			continue;
+		}
+		// Make move:
+		if (gm.TryMakeMove() == false) {
+			continue;
+		}
+
+		// After successful move rotate the current player:
 		gm.RotatePlayer();
 	}
 }

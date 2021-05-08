@@ -20,21 +20,20 @@ private:
 	FieldPos pos;
 public:
 	Square();
-	Square(u32 width, u32 height, SquareColor color, const Piece &piece, const FieldPos &pos);
+	Square(u32 width, u32 height, SquareColor color, const Piece *piece, FieldPos pos);
 	~Square();
 
-	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
-	void SetPiece(const Piece &piece);
-	bool GetEnPassant();
-	void SetEnPassant(bool value);
-
+	Piece GetPiece();
+	void SetPiece(const Piece *piece);
 	SquareColor GetColor();
 	void SetColor(SquareColor color);
-	Piece& GetPiece();
-	FieldPos& GetPos();
-
+	FieldPos GetPos();
+	bool GetEnPassant();
+	void SetEnPassant(bool value);
 	void OriginalPieceMoved();
 	bool HasOriginalPiece();
+
+	void Display(DisplayBuffer *dbuf, u32 top, u32 left) override;
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define PIECE_H
 
 #include "basic_types.h"
+#include "cutil.h"
 
 enum PieceType : char {
 	None = ' ',
@@ -21,7 +22,7 @@ private:
 public:
 
 	Piece();
-	Piece(const Piece &p);
+	Piece(const Piece *p);
 	Piece(PieceType type, i32 playerId);
 	~Piece();
 

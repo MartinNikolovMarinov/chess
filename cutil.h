@@ -11,12 +11,12 @@
 #define assert_exp(expression) if(!(expression)) { *(int *)0 = 0; }
 
 char U32DigitToChar(u32 n);
-u32 CharToU32Digit(char _c);
-u32 ChessDigitToCanonicalPos(char _c);
-u32 ChessLetterToCanonicalPos(char _c);
-char CanonicalPosToChessLetter(u32 _n);
+u32 CharToU32Digit(char c);
+u32 ChessDigitToCanonicalPos(char c);
+u32 ChessLetterToCanonicalPos(char c);
+char CanonicalPosToChessLetter(u32 n);
 void ClearScreen();
 
-std::vector<std::string> Debug_StrSplit(const std::string &_s, const std::string &_delim);
+std::vector<std::string> Debug_StrSplit(const std::string &s, const std::string &delim);
 
 #endif

@@ -7,39 +7,42 @@
 
 class GameState
 {
+private:
+	u32 currPlayer = 1;
 public:
 	// IMPORTANT:
-	// This kind of references should be shared pointers.
+	// This kind of pointers should be shared pointers.
 	// But the current implementation just keeps memory for them on the stack
 	// and keeps them alive until the probgram ends.
 	// Which means that referencing freed memory is not likely.
-	ChessBoard &chessBoard;
-	MovementRules &movementRules;
-
-	u32 currPlayer = 1;
-	std::vector<FieldPos> opponentAttackVect;
-	std::string errMsg;
-
-	// Special game states:
-	bool isGameOver = false;
+	ChessBoard *chessBoard;
+	MovementRules *movementRules;
 
 	FieldPos currMovingFrom;
 	FieldPos currMovingTo;
+	// std::vector<Square*> currControlledSquares;
+	// std::vector<Square*> opponentControlledSquares;
+	std::string errMsg; // clear from api caller, not in Init !
+
+	// Special game states:
+	bool isGameOver = false;
+	bool isInCheck = false;
 
 	GameState();
-	GameState(ChessBoard &chessBoard, MovementRules &movementRules);
+	GameState(ChessBoard *chessBoard, MovementRules *movementRules);
 	~GameState();
-
+	u32 GetCurrPlayer();
+	u32 GetOpponentPlayer();
 	void RotatePlayer();
-	i32 CheckBasicRules();
 	void Init();
 
-	void GetPlayerSquares(u32 playerId, std::vector<Square*> &out);
-	void CalcOpponentAttackVect();
+	bool CheckBasicRules();
+	bool IsOpponentAttackingAt(i32 row, i32 col);
+	bool IsOpponentAttackingAt(FieldPos p);
 	bool IsCurrPlayerInCheck();
-	bool IsLegalCastlePos(const FieldPos &pos, u32 playerId);
-	bool IsSquareUnderAttack(i32 row, i32 col);
-	bool IsSquareUnderAttack(const FieldPos &p);
+	bool IsCurrMoveLegal();
+	bool IsLegalCastlePos(FieldPos pos, u32 playerId);
+	bool TryMakeMove();
 };
 
 FieldPos FindKingSquare(const std::vector<Square*> squares);

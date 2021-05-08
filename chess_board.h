@@ -24,30 +24,31 @@ private:
 	Square field[FIELD_SIZE][FIELD_SIZE];
 
 	void initBoardState();
+	bool canAttackSquare(u32 playerId, i32 attackedRow, i32 attackedCol);
 public:
 
 	ChessBoard();
 	~ChessBoard();
 
+	Piece GetPieceAt(i32 row, i32 col);
+	Piece GetPieceAt(FieldPos pos);
+	void SetPieceAt(i32 row, i32 col, const Piece *p);
+	void SetPieceAt(FieldPos pos, const Piece *p);
 	PieceType GetPieceTypeAt(i32 row, i32 col);
-	Piece& GetPieceAt(i32 row, i32 col);
-	Piece& GetPieceAt(const FieldPos& _pos);
-	void SetPieceAt(i32 row, i32 col, const Piece &p);
-	void SetPieceAt(const FieldPos& _pos, const Piece &_p);
-	Square& GetSquareAt(i32 row, i32 col);
+	PieceType GetPieceTypeAt(FieldPos pos);
+	Square* GetSquareAt(i32 row, i32 col);
+	Square* GetSquareAt(FieldPos pos);
+	void GetPlayerSquares(u32 playerId, std::vector<Square*> &out);
 
 	bool IsInRange(i32 row, i32 col);
-	bool IsInRange(const FieldPos& _pos);
+	bool IsInRange(FieldPos _pos);
 	bool IsOwnedByOpponent(u32 playerId, i32 row, i32 col);
-	bool IsOwnedByOpponent(u32 playerId, const FieldPos &_pos);
-	void SwapPieces(const FieldPos first, const FieldPos second);
-	bool CanAttackSquare(u32 playerId, i32 attackedRow, i32 attackedCol);
+	bool IsOwnedByOpponent(u32 playerId, FieldPos _pos);
+	void SwapPieces(FieldPos first, FieldPos second);
 	void PushIfAttackPossible(u32 playerId, i32 attackedRow, i32 attackedCol, std::vector<FieldPos> &attackVect);
-	void CalcAttackVector(const FieldPos &from, const FieldPos &to, const FieldPos &direction, std::vector<FieldPos> &attackVect);
-	void Display(DisplayBuffer &dbuf, u32 top, u32 left) override;
+	void CalcAttackVector(FieldPos from, FieldPos to, FieldPos direction, std::vector<FieldPos> &attackVect);
 
-	void Debug_SetColorsForAttack(const std::vector<FieldPos> &_av);
-	void Debug_RemoveDebugColorsFromBoard();
+	void Display(DisplayBuffer *dbuf, u32 top, u32 left) override;
 };
 
 #endif

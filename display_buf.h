@@ -25,9 +25,10 @@ public:
 
 class Displayer {
 public:
-    virtual void Display(DisplayBuffer &_dbuf, u32 _top, u32 _left) {
-		assert_exp(_top < _dbuf.GetHeight());
-		assert_exp(_left < _dbuf.GetWidth());
+    virtual void Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
+		assert_exp(_dbuf != nullptr);
+		assert_exp(_top < _dbuf->GetHeight());
+		assert_exp(_left < _dbuf->GetWidth());
     }
 };
 

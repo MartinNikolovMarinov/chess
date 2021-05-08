@@ -89,7 +89,7 @@ void pushQueenAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_
 void pushKnightAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
 	i32 currRow, currCol;
 	bool canAttack;
-	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	Piece subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 	u32 playerId = subjectPiece.GetPlayerId();
 
@@ -105,7 +105,7 @@ void pushKnightAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &
 
 void pushKingAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
 	bool canAttack;
-	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	Piece subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 	u32 playerId = subjectPiece.GetPlayerId();
 
@@ -125,7 +125,7 @@ void pushKingMoves(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av)
 
 void pushPawnkAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
 	bool canAttack;
-	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	Piece subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 	u32 playerId = subjectPiece.GetPlayerId();
 
@@ -140,7 +140,7 @@ void pushPawnkAttacks(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_
 
 void pushPawnMoves(ChessBoard &_cb, FieldPos &_from, std::vector<FieldPos> &_av) {
 	bool canAttack;
-	Piece &subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
+	Piece subjectPiece = _cb.GetPieceAt(_from.Row, _from.Col);
 	assert_exp(subjectPiece.GetType() != PieceType::None);
 	u32 playerId = subjectPiece.GetPlayerId();
 
