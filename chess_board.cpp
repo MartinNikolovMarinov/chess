@@ -167,50 +167,6 @@ void ChessBoard::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
 }
 
 void ChessBoard::initBoardState() {
-#if 1
-	/* DEBUG:
-		This slow/bad code is here for debugging convenience, until the final algorithm is done!
-	*/
-
-	std::string rawField =
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 2Q\n"
-		"00 00 00 00 00 00 2P 00\n"
-		"00 00 00 00 00 2P 00 00\n"
-		"00 00 2K 00 1K 00 00 00\n"
-		"2R 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 2R 00 00";
-
-	// std::string rawField =
-	// 	"2R 2N 2B 2Q 2K 2B 2N 2R\n"
-	// 	"2P 2P 2P 2P 2P 2P 2P 2P\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"00 00 00 00 00 00 00 00\n"
-	// 	"1P 1P 1P 1P 1P 1P 1P 1P\n"
-	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
-
-	auto splitVect = Debug_StrSplit(rawField, "\n");
-	for (i32 row = 0; row < splitVect.size(); row++) {
-		std::string line = splitVect[row];
-		auto lSplitVect = Debug_StrSplit(line, " ");
-		for (i32 col = 0; col < lSplitVect.size(); col++) {
-			std::string pieceStr = lSplitVect[col];
-			assert_exp(pieceStr.length() == 2);
-			char pChar = pieceStr[0];
-			char tChar = pieceStr[1];
-
-			i32 playerId = CharToU32Digit(pChar);
-			assert_exp(0 <= playerId && playerId <= 2);
-			PieceType type = (tChar != '0') ? (PieceType)tChar : PieceType::None;
-
-			Piece p = Piece(type, playerId);
-			field[row][col].SetPiece(&p);
-		}
-	}
-#else
 	Piece p;
 
 	p = Piece(PieceType::Rook, 1);
@@ -280,5 +236,4 @@ void ChessBoard::initBoardState() {
 	field[1][6].SetPiece(&p);
 	p = Piece(PieceType::Pawn, 2);
 	field[1][7].SetPiece(&p);
-#endif
 }
