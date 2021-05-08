@@ -4,9 +4,7 @@
 #include "game_state.h"
 #include "commands.h"
 
-// TODO: implement "game is over" logic.
 // TODO: enpassant take rule.
-
 // TODO: add all unnecessary getters and setters to comply to OOP nonsense.
 
 #include "move_rules.h"
@@ -17,79 +15,20 @@ int main() {
 	MovementRules mv;
 	GameState gm = GameState(&cb, &mv);
 	TextDisplay mfu = TextDisplay();
+	u32 winner = 0;
 
 	// FIXME: TMP code
-	// #include <sstream>
-	std::stringstream debugIn(
-		"2E 4E\n"
-		"7E 5E\n"
-		"1G 3F\n"
-		"8B 6C\n"
-		"1F 5B\n"
-		"8G 6F\n"
-		"1E 1G\n"
-		"6F 4E\n"
-		"1F 1E\n"
-		"4E 6D\n"
-		"3F 5E\n"
-		"8F 7E\n"
-		"5B 1F\n"
-		"6C 5E\n"
-		"1E 5E\n"
-		"8E 8G\n"
-		"2D 4D\n"
-		"7E 6F\n"
-		"5E 1E\n"
-		"8F 8E\n"
-		"2C 3C\n"
-		"8E 1E\n"
-		"1D 1E\n"
-		"6D 8E\n"
-		"1C 4F\n"
-		"7D 5D\n"
-		"1F 3D\n"
-		"7G 6G\n"
-		"1B 2D\n"
-		"8E 7G\n"
-		"2D 3F\n"
-		"8C 5F\n"
-		"3D 5F\n"
-		"7G 5F\n"
-		"1E 2E\n"
-		"7C 6C\n"
-		"1A 1E\n"
-		"5F 7G\n"
-		"4F 5E\n"
-		"6F 5E\n"
-		"3F 5E\n"
-		"8D 6D\n"
-		"5E 3D\n"
-		"8A 8E\n"
-		"2E 2D\n"
-		"8E 1E\n"
-		"2D 1E\n"
-		"7G 6E\n"
-		"1E 3E\n"
-		"7F 6F\n"
-		"2H 4H\n"
-		"7H 5H\n"
-		"3E 6H\n"
-		"8G 7F\n"
-		"6H 3E\n"
-		"7F 8G\n"
-		"3E 6H\n"
-		"8G 7F\n"
-		"6H 3E\n"
-		"7F 8G\n"
-		"3E 6H\n"
-	);
+	// std::stringstream debugIn(
+	// 	"4E 5F\n" // not legal
+	// 	"4E 5E\n"
+	// 	"7H 7E\n" // mate
+	// );
 	// gm.RotatePlayer();
-	i32 count = 0;
 	// --FIXME: TMP code
 
 	while(!gm.isGameOver) {
 		// FIXME: TMP code
-		std::cin.get();
+		// std::cin.get();
 		// --FIXME: TMP code
 
 		// Clean all state:
@@ -106,31 +45,30 @@ int main() {
 			dbuf.FlushTo(std::cout);
 			gm.errMsg.clear();
 
-			std::cin.get();
+			std::cin.get(); // For some reason I need cin.get twice...
 			while (std::cin.get() != '\n'); // wait for user to press space and ignore any other pressed key.
 			continue;
-		}
-
-		// Validate Checkmate state:
-		if (gm.IsCurrPlayerInCheck() == true) {
-			gm.isInCheck = true;
-
 		}
 
 		// Render to screen:
 		cb.Display(&dbuf, 2, DISPLAY_CHESS_CENTER_LEFT);
 		dbuf.FlushTo(std::cout);
 
-		// Prompt the player for input. This blocks the thread
-		// so drawing needs to happen above this line!
+		// Validate Checkmate state:
+		if (gm.IsCurrPlayerInCheck() == true) {
+			gm.isInCheck = true;
+			if (gm.IsCheckmate()) {
+				// opponent won
+				winner = gm.GetOpponentPlayer();
+				break;
+			}
+		}
+
 		gm.currMovingFrom = {};
 		gm.currMovingTo = {};
-#if 1
+#if 0
 		// FIXME: TMP code
 		MoveCmd cmd = MoveCmd(std::cout, debugIn);
-		// FIXME: --TMP code
-
-		// FIXME: TMP code
 		// if (cmd.GetUserInput() == "2D 1E") {
 		// 	std::cout << "\0";
 		// 	// Render to screen:
@@ -143,6 +81,12 @@ int main() {
 		MoveCmd cmd = MoveCmd(std::cout, std::cin);
 #endif
 
+		if (gm.isInCheck) {
+			std::cout << "You are in CHECK!" << std::endl;
+		}
+
+		// Prompt the player for input. This blocks the thread
+		// so drawing needs to happen above this line!
 		if (cmd.PromptPlayerInput(gm.GetCurrPlayer(), gm.currMovingFrom, gm.currMovingTo, gm.errMsg) < 0) {
 			continue;
 		}
@@ -162,4 +106,7 @@ int main() {
 		// After successful move rotate the current player:
 		gm.RotatePlayer();
 	}
+
+	// ClearScreen();
+	std::cout << "Checkmate! Player " << winner << " is the winner." << std::endl;
 }

@@ -43,7 +43,8 @@ bool GameState::CheckBasicRules() {
 	return true;
 }
 
-bool GameState::IsOpponentAttackingAt(i32 _row, i32 _col) {
+bool GameState::IsOpponentAttackingAt(i32 _row, i32 _col, std::vector<FieldPos> *_attackers) {
+	bool isAttacked = false;
 	std::vector<Square*> ocs; // opponent controlled squares.
 	chessBoard->GetPlayerSquares(this->GetOpponentPlayer(), ocs);
 	std::vector<FieldPos> av; // attack vector
@@ -56,14 +57,19 @@ bool GameState::IsOpponentAttackingAt(i32 _row, i32 _col) {
 		movementRules->PushPieceLegalAttacks(*chessBoard, piece, pos, av);
 		for (i32 j = 0; j < av.size(); j++) {
 			if (av[j].Row == _row && av[j].Col == _col) {
-				return true;
+				isAttacked = true;
+				if (_attackers != nullptr) {
+					_attackers->push_back(pos);
+				} else {
+					return isAttacked;
+				}
 			}
 		}
 
 		av.clear();
 	}
 
-	return false;
+	return isAttacked;
 }
 
 bool GameState::IsOpponentAttackingAt(FieldPos _p) {
@@ -71,9 +77,9 @@ bool GameState::IsOpponentAttackingAt(FieldPos _p) {
 }
 
 bool GameState::IsCurrPlayerInCheck() {
-	std::vector<Square*> ccs;
-	chessBoard->GetPlayerSquares(this->GetCurrPlayer(), ccs);
-	FieldPos kingPos = findKingPos(ccs);
+	std::vector<Square*> cpcs; // current player controlled squares
+	chessBoard->GetPlayerSquares(this->GetCurrPlayer(), cpcs);
+	FieldPos kingPos = findKingPos(cpcs);
 	bool ret = this->IsOpponentAttackingAt(kingPos);
 	return ret;
 }
@@ -212,6 +218,74 @@ bool GameState::TryMakeMove() {
 	// After the move mark squares as no longer holding theier original pieces.
 	fromSquare->OriginalPieceMoved();
 	toSquare->OriginalPieceMoved();
+
+	return true;
+}
+
+// NOTE: IsCheckmate is quite slow.
+bool GameState::IsCheckmate() {
+	std::vector<Square*> cpcs; // current player controlled squares
+	chessBoard->GetPlayerSquares(this->GetCurrPlayer(), cpcs);
+
+	FieldPos kingPos = findKingPos(cpcs);
+	std::vector<FieldPos> kingLegalMoves;
+	Piece kingPiece = this->chessBoard->GetPieceAt(kingPos);
+	this->movementRules->PushPieceLegalMoves(*chessBoard, kingPiece, kingPos, kingLegalMoves);
+	for (i32 i = 0; i < kingLegalMoves.size(); i++) {
+		FieldPos move = kingLegalMoves[i];
+		Piece movePieceCopy = chessBoard->GetPieceAt(move);
+
+		// Try to make the move:
+		chessBoard->SetPieceAt(move, &kingPiece);
+		chessBoard->SetPieceAt(kingPos, &EMPTY_PIECE);
+
+		// Check if put's the player out of danger:
+		bool isAttacked = this->IsOpponentAttackingAt(move.Row, move.Col);
+
+		// Undo the move:
+		chessBoard->SetPieceAt(move, &movePieceCopy);
+		chessBoard->SetPieceAt(kingPos, &kingPiece);
+
+		if (isAttacked == false) {
+			// there is a safe place for the king to move to.
+			return false;
+		}
+	}
+
+	std::vector<FieldPos> attackers;
+	bool isAttacked = this->IsOpponentAttackingAt(kingPos.Row, kingPos.Col, &attackers);
+	assert_exp(isAttacked); // should not be in this function if there was no check on the king.
+	assert_exp(attackers.size() > 0); // player is in check, there must be attackers.
+
+	// If the king can't move and there are more than two attackers game is over!
+	if (attackers.size() == 1) {
+		// If the king can NOT move and there is only one attacker, check to see if any friendly pieces
+		// can move in the way of the check.
+		FieldPos attackerPos = attackers[0];
+		std::vector<FieldPos> friendlyLegalMoves;
+		for (i32 i = 0; i < cpcs.size(); i++) {
+			FieldPos fpos = cpcs[i]->GetPos();
+			Piece fp = cpcs[i]->GetPiece();
+			if (fp.GetType() != PieceType::King) {
+				this->movementRules->PushPieceLegalMoves(*chessBoard, fp, fpos, friendlyLegalMoves);
+			}
+		}
+
+		FieldPos attackDirection = ToDirectionVect(kingPos - attackerPos);
+		FieldPos currAttackedPos = kingPos - attackDirection;
+		while (currAttackedPos != attackerPos) {
+			// Can any of the player pieces help:
+			for (i32 i = 0; i < friendlyLegalMoves.size(); i++) {
+				FieldPos fmove = friendlyLegalMoves[i];
+				if (fmove == currAttackedPos) {
+					// There is a piece that can stand in the way of mate!
+					return false;
+				}
+			}
+
+			currAttackedPos -= attackDirection;
+		}
+	}
 
 	return true;
 }

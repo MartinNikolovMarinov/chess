@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "basic_types.h"
+#include "position.h"
 #include "cutil.h"
 #include "display_buf.h"
 #include "piece.h"

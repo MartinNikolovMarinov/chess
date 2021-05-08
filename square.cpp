@@ -9,6 +9,7 @@ Square::Square(u32 _w, u32 _h, SquareColor _c, const Piece *_p, FieldPos _pos) {
 
 	width = _w;
 	height = _h;
+	color = _c;
 	pos.Row = _pos.Row;
 	pos.Col = _pos.Col;
 	this->SetPiece(_p);

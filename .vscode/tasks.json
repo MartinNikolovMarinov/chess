@@ -16,6 +16,7 @@
                 "${workspaceFolder}/game_state.cpp",
                 "${workspaceFolder}/commands.cpp",
                 "${workspaceFolder}/move_rules.cpp",
+                "${workspaceFolder}/position.cpp",
                 "-o",
                 "${workspaceFolder}/build/main"
             ],

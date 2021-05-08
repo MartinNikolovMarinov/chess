@@ -4,6 +4,7 @@
 #include "chess_board.h"
 #include "basic_types.h"
 #include "move_rules.h"
+#include "position.h"
 
 class GameState
 {
@@ -37,14 +38,13 @@ public:
 	void Init();
 
 	bool CheckBasicRules();
-	bool IsOpponentAttackingAt(i32 row, i32 col);
+	bool IsOpponentAttackingAt(i32 row, i32 col, std::vector<FieldPos> *attackers = nullptr);
 	bool IsOpponentAttackingAt(FieldPos p);
 	bool IsCurrPlayerInCheck();
 	bool IsCurrMoveLegal();
 	bool IsLegalCastlePos(FieldPos pos, u32 playerId);
 	bool TryMakeMove();
+	bool IsCheckmate();
 };
-
-FieldPos FindKingSquare(const std::vector<Square*> squares);
 
 #endif

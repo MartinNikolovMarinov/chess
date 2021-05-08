@@ -4,6 +4,7 @@
 #include "basic_types.h"
 #include "piece.h"
 #include "display_buf.h"
+#include "position.h"
 
 enum SquareColor : u8 {
 	Black = 0,

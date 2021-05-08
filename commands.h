@@ -6,6 +6,7 @@
 #include "string"
 #include "cutil.h"
 #include "game_state.h"
+#include "position.h"
 #include "iostream"
 
 class MoveCmd

@@ -168,19 +168,29 @@ void ChessBoard::Display(DisplayBuffer *_dbuf, u32 _top, u32 _left) {
 
 void ChessBoard::initBoardState() {
 #if 1
-	/* FIXME:
+	/* DEBUG:
 		This slow/bad code is here for debugging convenience, until the final algorithm is done!
 	*/
 
 	std::string rawField =
-		"2R 2N 2B 2Q 2K 2B 2N 2R\n"
-		"2P 2P 2P 2P 2P 2P 2P 2P\n"
 		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 2Q\n"
+		"00 00 00 00 00 00 2P 00\n"
+		"00 00 00 00 00 2P 00 00\n"
+		"00 00 2K 00 1K 00 00 00\n"
+		"2R 00 00 00 00 00 00 00\n"
 		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"00 00 00 00 00 00 00 00\n"
-		"1P 1P 1P 1P 1P 1P 1P 1P\n"
-		"1R 1N 1B 1Q 1K 1B 1N 1R";
+		"00 00 00 00 00 2R 00 00";
+
+	// std::string rawField =
+	// 	"2R 2N 2B 2Q 2K 2B 2N 2R\n"
+	// 	"2P 2P 2P 2P 2P 2P 2P 2P\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"00 00 00 00 00 00 00 00\n"
+	// 	"1P 1P 1P 1P 1P 1P 1P 1P\n"
+	// 	"1R 1N 1B 1Q 1K 1B 1N 1R";
 
 	auto splitVect = Debug_StrSplit(rawField, "\n");
 	for (i32 row = 0; row < splitVect.size(); row++) {

@@ -3,6 +3,7 @@
 
 #include "piece.h"
 #include "chess_board.h"
+#include "position.h"
 
 class MovementRules {
 public:
