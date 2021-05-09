@@ -1,0 +1,47 @@
+// Field:
+std::string rawField =
+    "2R 00 00 00 2K 00 00 2R\n"
+    "00 00 00 00 00 00 00 00\n"
+    "00 00 00 00 00 00 00 00\n"
+    "00 00 00 00 00 00 00 00\n"
+    "00 00 00 00 00 00 00 00\n"
+    "00 00 00 00 00 00 00 00\n"
+    "00 00 00 00 00 00 00 00\n"
+    "1R 00 00 00 1K 00 00 1R";
+
+// Bottom Left and Top Right:
+"1E 1C\n"
+"8E 8G\n"
+
+// Bottom Right and Top Left:
+"1E 1G\n"
+"8E 8C\n"
+
+// Bottom Left and Top Right, Second fails:
+"1E 1C\n"
+"8E 8C\n"
+
+"1E 1G\n"
+"8E 8G\n"
+
+// Bottom Left and Top Right (!!Rotate user first!!):
+
+"8E 8G\n"
+"1E 1C\n"
+
+"8E 8C\n"
+"1E 1G\n"
+
+// Test rook moved, can't castle
+"1H 2H\n"
+"8A 7A\n"
+"2H 1H\n"
+"7A 8A\n"
+"1E 1G\n"
+
+// Test king moved, can't castle
+"1E 2E\n"
+"8A 7A\n"
+"2E 1E\n"
+"7A 8A\n"
+"1E 1G\n"

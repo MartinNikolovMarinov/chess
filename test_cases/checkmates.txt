@@ -1,0 +1,53 @@
+// List:
+	// Player two is check mated:
+
+	std::string rawField =
+		"1K 00 00 00 00 00 1R 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 2R 00 00 00 00 2K\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"1R 00 00 00 00 00 00 00";
+
+	// Moves:
+
+	"1A 1H\n"
+
+	// Player two is check but can move to protect agains mate.
+	// Eventually gets mated :
+
+	std::string rawField =
+		"1K 00 00 00 00 00 1R 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 2K\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 2R 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"1R 00 00 00 00 00 00 00";
+
+	// Moves:
+
+	"1A 1H\n"
+	"3C 3H\n"
+	"1H 3H\n"
+
+	// More complicated mate situation.
+
+	std::string rawField =
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 2Q\n"
+		"00 00 00 00 00 00 2P 00\n"
+		"00 00 00 00 00 2P 00 00\n"
+		"00 00 2K 00 1K 00 00 00\n"
+		"2R 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 00 00 00\n"
+		"00 00 00 00 00 2R 00 00";
+
+	// Moves:
+
+	"4E 5F\n" // not legal
+	"4E 5E\n"
+	"7H 7E\n" // mate

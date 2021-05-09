@@ -52,12 +52,9 @@ int main() {
 			}
 		}
 
-		gm.currMovingFrom = {};
-		gm.currMovingTo = {};
-		MoveCmd cmd = MoveCmd(std::cout, std::cin);
-
 		// Prompt the player for input. This blocks the thread
 		// so drawing needs to happen above this line!
+		MoveCmd cmd = MoveCmd(std::cout, std::cin);
 		if (cmd.PromptPlayerInput(gm.GetCurrPlayer(), gm.currMovingFrom, gm.currMovingTo, gm.errMsg) < 0) {
 			continue;
 		}
