@@ -3,8 +3,9 @@
 FieldPos findKingPos(const std::vector<Square*> _squares);
 
 GameState::GameState(ChessBoard *_cb, MovementRules *_mv) {
-	assert_exp(chessBoard != nullptr);
-	assert_exp(movementRules != nullptr);
+	assert_exp(_cb != nullptr);
+	assert_exp(_mv != nullptr);
+
 	chessBoard = _cb;
 	movementRules= _mv;
 }
